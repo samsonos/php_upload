@@ -15,6 +15,6 @@ use samson\core\iModuleViewable;
 class UploadConnector extends CompressableExternalModule
 {
 	/** Идентификатор модуля */
-	protected $id = 'upload';		
+	protected $id = 'samsonupload';		
 			
 }
