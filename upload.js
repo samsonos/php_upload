@@ -40,7 +40,7 @@ var uploadFileHandler = function( selector, options )
 	    uploadStatus.addEventListener("progress", function (ev)
 	    {	    	
 	    	// Calculate loaded part
-        	var c = ev.lengthComputable ? Math.ceil(100 * (ev.loaded / ev.total)) : 0;
+        	var c = ev.lengthComputable ? Math.ceil(100 * (ev.loaded / ev.total)) - 1 : 0;
         	
         	// If file not yet loaded and this is not "old" progress event
             if ( c > loaded_percent ) loaded_percent = c;
@@ -98,7 +98,16 @@ var uploadFileHandler = function( selector, options )
 			// Если это финальная стадия обработки асинхронного запроса
 			if ( xhr.readyState == 4 ) 
 			{
-				if(options.response) options.response(  xhr.responseText.trim(), xhr.status, xhr );				
+				if(options.response) 
+				{
+					 // Draw progress bar
+		            line.width( '100%' );
+		            
+		            // Output progress text
+		            progress_text.html('100%');
+					
+					options.response(  xhr.responseText.trim(), xhr.status, xhr );				
+				}
 			}			
 		};
 	});

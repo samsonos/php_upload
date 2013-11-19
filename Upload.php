@@ -53,7 +53,7 @@ class Upload
 	 * @param string $upload_name 	Uploaded file name real name to return on success upload
 	 * @return boolean True if file succesfully uploaded
 	 */
-	public function upload( & $file_name = '', & $upload_name = '' )
+	public function upload( & $file_path = '', & $upload_name = '', & $file_name = '' )
 	{		
 		// File extension also a flag
 		$this->file_type = FALSE;
@@ -73,11 +73,14 @@ class Upload
 				// Save real fiel name
 				$upload_name = $this->upload_file;
 				
+				// Generate filename
+				$file_name = strtolower(md5(time().$this->upload_file).'.'.$this->file_type);
+				
 				// Generate unique hashed file name for storing on server
-				$file_name = basename($this->upload_dir).'/'.md5(time().$this->upload_file).'.'.$this->file_type;
+				$file_path = basename($this->upload_dir).'/'.$file_name;
 				
 				// Create file 
-				file_put_contents( $file_name, file_get_contents('php://input') );
+				file_put_contents( $file_path, file_get_contents('php://input') );	
 				
 				// Success
 				return true;
