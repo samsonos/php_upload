@@ -59,7 +59,7 @@ class Upload
 		$this->file_type = FALSE;
 		
 		// Try to get upload file with new upload method
-		$this->upload_file = & $_SERVER['HTTP_X_FILE_NAME'];		
+		$this->upload_file = urldecode($_SERVER['HTTP_X_FILE_NAME']);
 		
 		// If upload data exsists
 		if( isset( $this->upload_file ) )
