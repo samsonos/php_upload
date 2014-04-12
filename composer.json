@@ -1,1 +1,1 @@
-{"name":"samsonos/samsonupload","author":"Vitaly Iegorov <egorov@samsonos.com>","version":"0.0.1","require":{"samsonjs":"*.*.*"}}
+{"name":"samsonos/upload","author":"Vitaly Iegorov <egorov@samsonos.com>","version":"0.0.1","require":{"samsonjs":"*.*.*"},"license":"Open Software License (\"OSL\") v 3.0\n","homepage":"http://samsonos.com/"}
