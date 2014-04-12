@@ -4,8 +4,13 @@ var uploadFileHandler = function( selector, options )
 	if( options == undefined ) options = { };
 	
 	// File selected event
-	s(selector).change( function(input)
-	{			
+	var handler = function(input)
+	{
+        // If no file selected - exit
+        if (!input.DOMElement.files.length) {
+            return true;
+        }
+
 		// Get file object for uploading
 		var file = input.DOMElement.files[0];
 		
@@ -17,6 +22,8 @@ var uploadFileHandler = function( selector, options )
 		var filename = s('.__file_name', p );			
 		var line = s( 'p', progress);
 		var progress_text = s('.__progress_text', p );
+        var max_file_size = s('.__file_size', p );
+
 
 		// Loading status
 		p.addClass('loading');
@@ -51,7 +58,7 @@ var uploadFileHandler = function( selector, options )
             // Output progress text
             progress_text.html(c+'%');
             
-            if( options.progress != undefined ) options.progress(file); 
+            if( options.progress != undefined ) options.progress(file, loaded_percent, ev);
             
 	    }, false);
 
@@ -77,11 +84,12 @@ var uploadFileHandler = function( selector, options )
 	    }, false);
 	    
 	    // If start handler is passed - call it
-	    if( options.start != undefined ) options.start();
+	    if( options.start != undefined ) options.start(file);
 	    
 	    // Get upload controller url
 	    var url = s('.__action', p ).val();	    
-
+        var maxsize = parseInt(max_file_size.val());
+        s.trace(maxsize);
 	    // Perform request
 	    xhr.open( "POST", url, true );
         xhr.setRequestHeader("Cache-Control", "no-cache");
@@ -90,7 +98,15 @@ var uploadFileHandler = function( selector, options )
         xhr.setRequestHeader("X-File-Size", file.size );
         xhr.setRequestHeader("X-File-Type", file.type );
         //xhr.setRequestHeader("Content-Type", "application/octet-stream");
-        xhr.send( file );
+        // Add special async header
+        xhr.setRequestHeader('SJSAsync', 'true');
+        s.trace(file.size);
+        if (file.size < maxsize) {
+            xhr.send( file );
+        } else {
+            alert ('Слишом большой файл');
+        }
+
         
         // Response handler
         xhr.onreadystatechange = function() 
@@ -110,7 +126,13 @@ var uploadFileHandler = function( selector, options )
 				}
 			}			
 		};
-	});
+	};
+
+    if (!options.autochange) {
+        s(selector).change(handler);
+    } else {
+        handler(selector);
+    }
 };
 
 /** Automaticly bind uploader by special class */

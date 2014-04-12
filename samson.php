@@ -17,4 +17,5 @@ class UploadConnector extends CompressableExternalModule
 	/** Идентификатор модуля */
 	protected $id = 'samsonupload';		
 			
+	public $requirements = array('samsonjs');
 }

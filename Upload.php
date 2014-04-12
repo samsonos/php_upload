@@ -17,7 +17,7 @@ class Upload
 	const UPLOAD_PATH = 'upload/';
 
 // 	/** Name of form file field */
-// 	protected $file_field;
+// 	protected $file_field;	
 
 	/** Supported file extensions */
 	protected $extensions = array();
@@ -27,18 +27,23 @@ class Upload
 	
 	/** Upload server path */
 	public $upload_dir = self::UPLOAD_PATH;	
-	
+
 	/**
 	 * Constructor	  
 	 * @param array $extensions
 	 */
-	public function __construct( array $extensions = array() ) 
+	public function __construct( array $extensions = array(), $user_dir = null )
 	{			
 		// Set file extension limitations
 		$this->extensions = $extensions;
-		
-		// Build full path to upload dir
-		$this->upload_dir = __SAMSON_CWD__.$this->upload_dir;
+
+        if (isset($user_dir)) {
+            $this->upload_dir = $user_dir;
+        } else {
+            // Build full path to upload dir
+            $this->upload_dir = $this->upload_dir;
+        }
+
 		
 		// If upload path does not exsits - create it
 		if( !file_exists( $this->upload_dir ) ) mkdir( $this->upload_dir, 0775, true ); 
@@ -54,13 +59,12 @@ class Upload
 	 * @return boolean True if file succesfully uploaded
 	 */
 	public function upload( & $file_path = '', & $upload_name = '', & $file_name = '' )
-	{		
+	{
 		// File extension also a flag
 		$this->file_type = FALSE;
 		
 		// Try to get upload file with new upload method
 		$this->upload_file = urldecode($_SERVER['HTTP_X_FILE_NAME']);
-		
 		// If upload data exsists
 		if( isset( $this->upload_file ) )
 		{				
@@ -75,10 +79,8 @@ class Upload
 				
 				// Generate filename
 				$file_name = strtolower(md5(time().$this->upload_file).'.'.$this->file_type);
-				
 				// Generate unique hashed file name for storing on server
-				$file_path = basename($this->upload_dir).'/'.$file_name;
-				
+				$file_path = $this->upload_dir.'/'.$file_name;
 				// Create file 
 				file_put_contents( $file_path, file_get_contents('php://input') );	
 				
