@@ -1,5 +1,5 @@
-ActiveRecord # SamsonPHP 
+Upload # SamsonPHP 
 
-Basic ORM module
+Module for asynchronous uploading files
 
-egorov@samsonos.com
+Developed by [SamsonOS](http://samsonos.com/)
