@@ -80,7 +80,7 @@ class Upload
 				// Generate filename
 				$file_name = strtolower(md5(time().$this->upload_file).'.'.$this->file_type);
 				// Generate unique hashed file name for storing on server
-				$file_path = $this->upload_dir.'/'.$file_name;
+				$file_path = $this->upload_dir.$file_name;
 				// Create file 
 				file_put_contents( $file_path, file_get_contents('php://input') );	
 				
