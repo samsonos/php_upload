@@ -1,8 +1,21 @@
 {
 	"name":"samsonos/php_upload",
-	"author":"Vitaly Iegorov <egorov@samsonos.com>",
-	"version":"0.0.1",
-	"require":{"samsonos/js_core":"*", "samsonos/php_core":"*"},
+    "authors":[
+        {
+            "name":"Vitaly Iegorov",
+            "email":"egorov@samsonos.com"
+        }
+    ],
+	"require":{
+        "samsonos/js_core":"*",
+        "samsonos/php_core":"*"
+    },
 	"license":"Open Software License (OSL) v 3.0",
-	"homepage":"http://samsonos.com/"
+	"homepage":"http://samsonos.com/",
+    "autoload" : {
+        "classmap": ["src/"],
+        "psr-0": {
+            "samson\\upload\\": "src/"
+        }
+    }
 }
