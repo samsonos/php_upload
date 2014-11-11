@@ -21,69 +21,91 @@ class Upload
 
 	/** Supported file extensions */
 	protected $extensions = array();
-	
-	/** Upload file name */
-	protected $upload_file;
+
+    /** @var string real file path */
+    private $filePath;
+
+    /** @var string Name of uploaded file */
+    private $realName;
+
+    /** @var string Generated file name */
+    private $fileName;
+
+    /** @var string File MIME type */
+    private $mimeType;
+
+    /** @var string extension */
+    private $extension;
+
+    /** @var File size */
+    private $size;
 	
 	/** Upload server path */
-	public $upload_dir = self::UPLOAD_PATH;	
+	public $uploadDir = self::UPLOAD_PATH;
 
 	/**
-	 * Constructor	  
-	 * @param array $extensions
+	 * Constructor
+	 * @param array $extensions Array of excepted extensions
+     * @param string $userDir Directory to save file
 	 */
-	public function __construct( array $extensions = array(), $user_dir = null )
+	public function __construct(array $extensions = array(), $userDir = null)
 	{			
 		// Set file extension limitations
 		$this->extensions = $extensions;
 
-        if (isset($user_dir)) {
-            $this->upload_dir = $user_dir;
-        } else {
-            // Build full path to upload dir
-            $this->upload_dir = $this->upload_dir;
-        }
-
+        // Try to reset directory
+        $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
 		
 		// If upload path does not exsits - create it
-		if( !file_exists( $this->upload_dir ) ) mkdir( $this->upload_dir, 0775, true ); 
+		if (!file_exists($this->uploadDir)) mkdir($this->uploadDir, 0775, true);
 		
 		// If form field specified - save it
-		if( isset( $file_field ) ) $this->file_field = $file_field;
+		if(isset($file_field)) $this->file_field = $file_field;
 	}
 	
 	/**
 	 * Perform file uploading logic
-	 * @param string $file_name 	Uploaded file name on server to return on success upload
-	 * @param string $upload_name 	Uploaded file name real name to return on success upload
+     * @param string $filePath
+     * @param string $uploadName 	Uploaded file name real name to return on success upload
+	 * @param string $fileName 	Uploaded file name on server to return on success upload
 	 * @return boolean True if file succesfully uploaded
 	 */
-	public function upload( & $file_path = '', & $upload_name = '', & $file_name = '' )
+	public function upload( & $filePath = '', & $uploadName = '', & $fileName = '' )
 	{
 		// File extension also a flag
-		$this->file_type = FALSE;
+		$this->extension = FALSE;
 		
 		// Try to get upload file with new upload method
-		$this->upload_file = urldecode($_SERVER['HTTP_X_FILE_NAME']);
-		// If upload data exsists
-		if( isset( $this->upload_file ) )
-		{				
+		$this->realName = urldecode($_SERVER['HTTP_X_FILE_NAME']);
+
+		// If upload data exists
+		if (isset($this->realName)) {
+
 			// Get file extension
-			$this->file_type = pathinfo( $this->upload_file, PATHINFO_EXTENSION );
+			$this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
 			
 			// If we have no extension limitations or they are matched
-			if( !sizeof( $this->extensions ) || in_array( $this->file_type, $this->extensions ))
-			{				
-				// Save real fiel name
-				$upload_name = $this->upload_file;
+			if(!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
 				
 				// Generate filename
-				$file_name = strtolower(md5(time().$this->upload_file).'.'.$this->file_type);
+				$this->fileName = strtolower(md5(time() . $this->realName) . '.' . $this->extension);
 				// Generate unique hashed file name for storing on server
-				$file_path = $this->upload_dir.'/'.$file_name;
+				$this->filePath = $this->uploadDir . '/' . $this->fileName;
+                /** @var string $file */
+                $file = file_get_contents('php://input');
 				// Create file 
-				file_put_contents( $file_path, file_get_contents('php://input') );	
-				
+				file_put_contents($this->filePath, $file);
+                $this->size = strlen($file);
+                $this->mimeType = $_SERVER['HTTP_X_FILE_SIZE'];
+
+                // deprecated section
+                //
+                $filePath = $this->filePath;
+                $uploadName = $this->realName;
+                $fileName = $this->fileName;
+                //
+                //*******************
+
 				// Success
 				return true;
 			}
@@ -125,4 +147,34 @@ class Upload
 		// Failure
 		return false; 
 	}
+
+    public function realPath()
+    {
+        return $this->filePath;
+    }
+
+    public function realName()
+    {
+        return $this->realName;
+    }
+
+    public function name()
+    {
+        return $this->fileName;
+    }
+
+    public function mimeType()
+    {
+        return $this->mimeType;
+    }
+
+    public function extension($extension = null)
+    {
+        return isset($extension) ? ($extension === $this->extension ? true : false) : $this->extension;
+    }
+
+    public function size()
+    {
+        return $this->size;
+    }
 }
