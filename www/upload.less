@@ -1,0 +1,47 @@
+.__upload_process, .__upload_complete {
+  position: relative;
+  float:left;
+  display:block;
+  width:200px;
+  height:160px;
+  margin:10px;
+  border:1px dashed black;
+  line-height: 160px;
+  text-align: center;
+
+  &:hover { background-color:rgba(0,0,0,0.05); }
+
+  /* File field for uploading */
+//  &>.__image-upload{
+//    width: 100%;
+//    height: 100%;
+//    position: absolute;
+//    top: 0px;
+//    left: 0px;
+//    .opacity(0);
+//    z-index: 9;
+////    cursor: pointer;
+//  }
+
+  /* Progress text */
+  &>.__progress_text { font-weight:bold; display: block }
+
+  /* Bytes sent in progress */
+  &>.__progress_bytes { font-weight:normal; font-size: 10px; display: block }
+
+  /* Loading bar */
+  &>.__progress_bar{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    .opacity(0.5);
+
+
+    &>p{
+      height: 100%;
+      background-color: #65C836;
+      width: 0px;
+    }
+  }
+}
