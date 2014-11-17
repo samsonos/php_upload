@@ -29,6 +29,9 @@ class AwsAdapter implements iAdapter {
     /** @var callable $handler External handler for creating amazon upload catalog name */
     public static $handler;
 
+    /** @var string $awsUrl url of amazon bucket */
+    public static $awsUrl;
+
     /**
      * @param string $accessKey Amazon access key
      * @param string $secretKey Amazon secret key
@@ -60,6 +63,6 @@ class AwsAdapter implements iAdapter {
             'ACL'          => 'public-read'
         ));
 
-        return $uploadDir.'/'.$filename;
+        return 'http://static.landscape.ua/'.$uploadDir;
     }
 }

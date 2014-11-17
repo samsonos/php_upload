@@ -14,12 +14,12 @@ use samson\core\iModuleViewable;
  */
 class UploadConnector extends CompressableExternalModule
 {
-	/** Идентификатор модуля */
-	protected $id = 'samsonupload';
+    /** Идентификатор модуля */
+    protected $id = 'samsonupload';
 
-	public $requirements = array('samsonjs');
+    public $requirements = array('samsonjs');
 
-    public $adapterType;
+    public $adapterType = 'local';
 
     public $accessKey;
 
@@ -29,12 +29,15 @@ class UploadConnector extends CompressableExternalModule
 
     public $handler;
 
+    public $awsUrl;
+
     public function init(array $params = array())
     {
         AwsAdapter::$accessKey = $this->accessKey;
         AwsAdapter::$secretKey = $this->secretKey;
         AwsAdapter::$bucket = $this->bucket;
         AwsAdapter::$handler = $this->handler;
+        AwsAdapter::$awsUrl = $this->awsUrl;
         Upload::$type = $this->adapterType;
         parent::init($params);
     }
