@@ -11,5 +11,4 @@ namespace samson\upload;
 
 interface iAdapter {
     public function putContent($data, $filename = '', $uploadDir = '');
-    public function getId();
 }

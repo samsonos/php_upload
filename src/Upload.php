@@ -13,8 +13,10 @@ use samson\core\File;
  * @version 0.0.2
  */
 class Upload
-{	
-	const UPLOAD_PATH = 'upload/';
+{
+    public static $type;
+
+    const UPLOAD_PATH = 'upload/';
 
 	/** Supported file extensions */
 	protected $extensions = array();
@@ -37,6 +39,7 @@ class Upload
     /** @var File size */
     private $size;
 
+    /** @var iAdapter  */
     public $adapter;
 	
 	/** Upload server path */
@@ -47,21 +50,27 @@ class Upload
 	 * @param array $extensions Array of excepted extensions
      * @param string $userDir Directory to save file
 	 */
-	public function __construct(iAdapter $adapter, array $extensions = array(), $userDir = null)
+	public function __construct(array $extensions = array(), $userDir = null)
 	{			
 		// Set file extension limitations
 		$this->extensions = $extensions;
 
-        $this->adapter = $adapter;
+        if (Upload::$type == 'amazon') {
+            $this->adapter = new AwsAdapter();
+        } else {
+            $this->adapter = new LocalAdapter();
+        }
+
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
 
-        if ($this->adapter->getId() == 'local') {
-            // If upload path does not exsits - create it
-            if (!file_exists($this->uploadDir)) mkdir($this->uploadDir, 0775, true);
+        if (Upload::$type == 'local') {
+            // If upload path does not exists - create it
+            if (!file_exists($this->uploadDir)) {
+                mkdir($this->uploadDir, 0775, true);
+            }
         }
-
 	}
 	
 	/**

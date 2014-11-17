@@ -11,9 +11,6 @@ use Aws\S3\S3Client;
 use Aws\Common\Credentials\Credentials;
 
 class AwsAdapter implements iAdapter {
-    /** @var string $adapterId Adapter identifier */
-    public $adapterId = 'amazon';
-
     /** @var Credentials $credentials access key and secret key for amazon connect */
     protected $credentials;
 
@@ -21,25 +18,30 @@ class AwsAdapter implements iAdapter {
     protected $client;
 
     /** @var string $bucket Aws bucket name */
-    protected $bucket;
+    public static $bucket;
+
+    /** @var string $accessKey */
+    public static $accessKey;
+
+    /** @var string $secretKey */
+    public static $secretKey;
+
+    /** @var callable $handler External handler for creating amazon upload catalog name */
+    public static $handler;
 
     /**
      * @param string $accessKey Amazon access key
      * @param string $secretKey Amazon secret key
      * @param $bucket
      */
-    public function  __construct($accessKey, $secretKey, $bucket, $dir)
+    public function  __construct()
     {
-        $this->credentials = new Credentials('AKIAJRG2YUZ7KGMLDXRQ', 'j5TUvJNFMth9eVbTpQDY07skdCvL6zT8A0dWjqNv');
+        $this->credentials = new Credentials(AwsAdapter::$accessKey, AwsAdapter::$secretKey);
 
         // Instantiate the S3 client with AWS credentials
         $this->client = S3Client::factory(array(
             'credentials' => $this->credentials
         ));
-
-        $this->bucket = 'landscapestatic';
-
-        $this->dir = $dir;
     }
 
     /**
@@ -51,18 +53,13 @@ class AwsAdapter implements iAdapter {
     public function putContent($data, $filename = '', $uploadDir = '')
     {
         $this->client->putObject(array(
-            'Bucket'       => $this->bucket,
-            'Key'          => $this->dir.'/'.$filename,
+            'Bucket'       => AwsAdapter::$bucket,
+            'Key'          => $uploadDir.'/'.$filename,
             'Body'         => $data,
             'CacheControl' => 'max-age=1296000',
             'ACL'          => 'public-read'
         ));
 
-        return $this->dir.'/'.$filename;
-    }
-
-    public function getId()
-    {
-        return $this->adapterId;
+        return $uploadDir.'/'.$filename;
     }
 }

@@ -15,7 +15,27 @@ use samson\core\iModuleViewable;
 class UploadConnector extends CompressableExternalModule
 {
 	/** Идентификатор модуля */
-	protected $id = 'samsonupload';		
-			
+	protected $id = 'samsonupload';
+
 	public $requirements = array('samsonjs');
+
+    public $adapterType;
+
+    public $accessKey;
+
+    public $secretKey;
+
+    public $bucket;
+
+    public $handler;
+
+    public function init(array $params = array())
+    {
+        AwsAdapter::$accessKey = $this->accessKey;
+        AwsAdapter::$secretKey = $this->secretKey;
+        AwsAdapter::$bucket = $this->bucket;
+        AwsAdapter::$handler = $this->handler;
+        Upload::$type = $this->adapterType;
+        parent::init($params);
+    }
 }
