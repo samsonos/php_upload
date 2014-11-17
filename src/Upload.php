@@ -129,6 +129,11 @@ class Upload
         return $this->filePath;
     }
 
+    public function fullPath()
+    {
+        return $this->filePath.'/'.$this->fileName;
+    }
+
     /**
      * Returns uploaded file name
      * @return string File name

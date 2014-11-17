@@ -63,6 +63,6 @@ class AwsAdapter implements iAdapter {
             'ACL'          => 'public-read'
         ));
 
-        return 'http://static.landscape.ua/'.$uploadDir;
+        return AwsAdapter::$awsUrl.'/'.$uploadDir;
     }
 }
