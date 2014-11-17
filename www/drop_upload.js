@@ -59,6 +59,12 @@ var sjsDropFileUpload = {
         var successFile = undefined;
 
         /**
+         * External error handler
+         * @type {function|undefined}
+         */
+        var error = undefined;
+
+        /**
          * Function to be called after file load queue is empty
          * @type {function|undefined}
          */
@@ -66,19 +72,19 @@ var sjsDropFileUpload = {
 
         /**
          * DOM element to bind on drag
-         * @type {DOMElement|*}
+         * @type {Element}
          */
         var elem = this.DOMElement;
 
         /**
-         *
+         * variable to store SamsonJS object
          * @type {sjsDropFileUpload}
          */
         var sjsElem = this;
 
         /**
          * Asynchronous controller url
-         * @type {URL}
+         * @type {string|undefined}
          */
         var url;
 
@@ -88,6 +94,9 @@ var sjsDropFileUpload = {
          */
         var maxSize = (elem.hasAttribute('__maxsize')) ? parseInt(elem.getAttribute('__maxsize'))/1024/1024 : 2;
 
+        /**
+         * Variables to store elements, to show file upload progress
+         */
         var progressBlock, progressBars, progressText, progressBytes;
 
         // Bind all input options
@@ -109,13 +118,11 @@ var sjsDropFileUpload = {
 
         /**
          * Dropzone object to perform dragging
-         * @type {Window.Dropzone}
+         * Configure it with input parameters
          */
         var zone = new Dropzone(elem, {url : url,
             maxFilesize: maxSize,
             acceptedFiles: 'image/*',
-            //uploadMultiple: true,
-            //previewTemplate: false,
             previewsContainer: false,
             clickable: false
         });
@@ -133,11 +140,9 @@ var sjsDropFileUpload = {
         zone.on('drop', function(e){
             (drop === undefined) ? sjsElem.css('background-color', 'inherit') : drop(sjsElem, e);
         });
-        zone.on('sending', function(file, xhr, formData){
+        zone.on('sending', function(file, xhr){
             if (sending === undefined) {
-                formData = null;
-                //xhr.open("POST", url, true);
-                //xhr.setRequestHeader("Cache-Control", "no-cache");
+                xhr.setRequestHeader("Cache-Control", "no-cache");
                 xhr.setRequestHeader("Content-Type", "multipart/form-data");
                 xhr.setRequestHeader("X-File-Name", encodeURIComponent(file.name));
                 xhr.setRequestHeader("X-File-Size", file.size);
@@ -146,7 +151,7 @@ var sjsDropFileUpload = {
                 xhr.setRequestHeader('Accept', '*/*');
                 //xhr.send(file);
             } else {
-                sending(sjsElem, file, xhr, formData)
+                sending(sjsElem, file, xhr)
             }
         });
         zone.on('addedfile', function(file){
@@ -161,7 +166,7 @@ var sjsDropFileUpload = {
                 progressText = s('.__progress_text', progressBlock);
                 progressBytes = s('.__progress_bytes', progressBlock);
             } else {
-                fileAdded(file);
+                fileAdded(sjsElem, file);
             }
         });
         zone.on('uploadprogress', function(file, percent, bytesSent){
@@ -171,9 +176,6 @@ var sjsDropFileUpload = {
                     var bytes = progressBytes.elements[0];
                     process.width(percent + '%');
                     bytes.html(bytesSent + '/' + file.size + ' B');
-                    if (percent == 100) {
-
-                    }
                 }
             } else {
                 uploadProgress(sjsElem, file, percent, bytesSent);
@@ -200,6 +202,9 @@ var sjsDropFileUpload = {
             } else {
                 completeAll(sjsElem);
             }
+        });
+        zone.on('error', function(msg){
+            (error === undefined) ? alert(msg) : error(sjsElem, msg);
         });
     }
 

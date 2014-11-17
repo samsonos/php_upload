@@ -8,7 +8,7 @@ var sjsFileUpload = {
      * Function to bind DOM element to upload file on drop
      * @param options Object of handlers to perform on different actions.
      */
-    dropFileUpload : function(options) {
+    fileUpload : function(options) {
 
         /**
          * Selector of input element
@@ -17,16 +17,16 @@ var sjsFileUpload = {
         var inputSelector = undefined;
 
         /**
-         * Flag to view image loading info
-         * @type {bool|undefined}
+         * This function will perform before clicking on download button
+         * @type {function|undefined}
          */
-        var viewInfo = undefined;
+        var start = undefined;
 
         /**
          * This function is called when new file is added to upload queue
          * @type {function|undefined}
          */
-        var filesAdded = undefined;
+        var fileAdded = undefined;
 
         /**
          * Function to perform before ONE file is sent
@@ -47,6 +47,12 @@ var sjsFileUpload = {
         var successFile = undefined;
 
         /**
+         * External error handler
+         * @type {function|undefined}
+         */
+        var error = undefined;
+
+        /**
          * Function to be called after file load queue is empty
          * @type {function|undefined}
          */
@@ -54,27 +60,40 @@ var sjsFileUpload = {
 
         /**
          * DOM element to bind on drag
-         * @type {DOMElement|*}
+         * @type {Element|*}
          */
         var elem = this.DOMElement;
 
         /**
-         *
+         * Variable to store SamsonJS element
          * @type {sjsFileUpload}
          */
         var sjsElem = this;
 
+        /**
+         * Stores SamsonJS input element
+         */
         var input;
 
+        /**
+         * Variable to store files from input type="file" element
+         */
         var files;
 
+        /**
+         * Variable to store XMLHTTPRequest handlers.
+         */
         var uploadStatus;
 
+        /**
+         * An HTMLHTTPRequest object to perform asynchronous request
+         * @type {XMLHttpRequest}
+         */
         var xhr;
 
         /**
          * Asynchronous controller url
-         * @type {URL}
+         * @type {string|undefined}
          */
         var url;
 
@@ -82,16 +101,19 @@ var sjsFileUpload = {
          * Max file size
          * @type {Number}
          */
-        var maxSize = (elem.hasAttribute('__maxsize')) ? parseInt(elem.getAttribute('__maxsize'))/1024/1024 : 2;
+        var maxSize = (elem.hasAttribute('__maxsize')) ? parseInt(elem.getAttribute('__maxsize')) : 2000000;
 
-        var progressBlock, progressBars, progressText, progressBytes;
+        /**
+         * Variables to store elements, to show file upload progress
+         */
+        var progressBlocks, progressBars, progressTexts, progressBytes, loadPercent = 0;
 
         // Bind all input options
         if (typeof options === 'object') {
             url = options.url;
             inputSelector = options.inputSelector;
-            viewInfo = options.viewInfo;
-            filesAdded = options.filesAdded;
+            start = options.start;
+            fileAdded = options.fileAdded;
             sending = options.sending;
             uploadProgress = options.uploadProgress;
             successFile = options.successFile;
@@ -101,141 +123,103 @@ var sjsFileUpload = {
         // URL to send file
         url = (url === undefined) ? (elem.hasAttribute('__action_upload')) ? elem.getAttribute('__action_upload') : '/upload' : url;
 
-        // TODO: generate standard block
-        
-        input = (inputSelector === undefined) ? s('.__input_file') : s(inputSelector);
+        if (inputSelector === undefined) {
+            sjsElem.append('<input class="__input_file" type="file" multiple>' +
+            '<div class="__progress_bar"><p></p></div>' +
+            '<label class="__progress_text">Загрузить файл</label>');
+            input = s('.__input_file', sjsElem);
+        } else {
+            input = s(inputSelector);
+        }
 
-        files = input.DOMElement.files;
+        input.change(function(){
 
-        if (filesAdded === undefined) { filesAdded(files) }
+            files = input.DOMElement.files;
 
-        progressBlock = s('.__upload_process');
-        progressBars = s('.__progress_bar p', progressBlock);
-        progressText = s('.__progress_text', progressBlock);
-        progressBytes = s('.__progress_bytes', progressBlock);
+            if (start != undefined) { start(files) }
 
-        this.click(function(e){
+            // Create blocks and call user function on file add
             for (var i = 0; i < files.length; i++) {
                 (function(file){
+                    if (fileAdded === undefined) {
+                        sjsElem.parent().append('<li class="__upload_process">' +
+                        '<div class="__progress_bar"><p></p></div>' +
+                        '<label class="__progress_text">Загрузка файла</label>' +
+                        '<label class="__progress_bytes"></label>' +
+                        '</li>');
+                    } else {
+                        fileAdded(sjsElem, file);
+                    }
+                }(files[i]));
+            }
 
-                    xhr = new XMLHttpRequest();
+            progressBlocks = s('.__upload_process');
+            progressBars = s('.__progress_bar p', progressBlocks);
+            progressTexts = s('.__progress_text', progressBlocks);
+            progressBytes = s('.__progress_bytes', progressBlocks);
+
+            for (i = 0; i < files.length; i++) {
+
+                xhr = new XMLHttpRequest();
+                (function(file, _i){
+                    loadPercent = 0;
                     uploadStatus = xhr.upload;
 
                     uploadStatus.addEventListener('progress', function(e){
                         var c = e.lengthComputable ? Math.ceil(100 * (e.loaded / e.total)) - 1 : 0;
+                        loadPercent = (loadPercent < c) ? c : loadPercent;
+                        if (uploadProgress === undefined) {
+                            if (progressBlocks.elements[_i]) {
+                                progressBars.elements[_i].width(loadPercent + '%');
+                                progressBytes.elements[_i].html(e.loaded + '/' + e.total + 'B');
+                            }
+                        } else {
+                            uploadProgress(sjsElem, file, loadPercent, e.loaded);
+                        }
                     });
 
-                })(files[i]);
-            }
-        });
+                    uploadStatus.addEventListener('error', function(){
+                        (error === undefined) ? alert('Failed to upload file!') : error(sjsElem, 'Failed to upload file!');
+                    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /**
-         * Dropzone object to perform dragging
-         * @type {Window.Dropzone}
-         */
-        var zone = new Dropzone(elem, {url : url,
-            maxFilesize: maxSize,
-            acceptedFiles: 'image/*',
-            //uploadMultiple: true,
-            //previewTemplate: false,
-            previewsContainer: false,
-            clickable: false
-        });
-
-        // perform input parameters
-        zone.on('dragenter', function(e){
-            (dragEnter === undefined) ? sjsElem.css('background-color', 'rgba(131, 239, 81, 0.3)') : dragEnter(sjsElem, e);
-        });
-        zone.on('dragover', function(e){
-            (dragOver === undefined) ? sjsElem.css('background-color', 'rgba(131, 239, 81, 0.3)') : dragOver(sjsElem, e);
-        });
-        zone.on('dragleave', function(e){
-            (dragLeave === undefined) ? sjsElem.css('background-color', 'inherit') : dragLeave(sjsElem, e);
-        });
-        zone.on('drop', function(e){
-            (drop === undefined) ? sjsElem.css('background-color', 'inherit') : drop(sjsElem, e);
-        });
-        zone.on('sending', function(file, xhr, formData){
-            if (sending === undefined) {
-                formData = null;
-                //xhr.open("POST", url, true);
-                //xhr.setRequestHeader("Cache-Control", "no-cache");
-                xhr.setRequestHeader("Content-Type", "multipart/form-data");
-                xhr.setRequestHeader("X-File-Name", encodeURIComponent(file.name));
-                xhr.setRequestHeader("X-File-Size", file.size);
-                xhr.setRequestHeader("X-File-Type", file.type);
-                xhr.setRequestHeader('SJSAsync', 'true');
-                xhr.setRequestHeader('Accept', '*/*');
-                //xhr.send(file);
-            } else {
-                sending(sjsElem, file, xhr, formData)
-            }
-        });
-        zone.on('addedfile', function(file){
-            if (fileAdded === undefined) {
-                sjsElem.append('<li class="__upload_process">' +
-                '<div class="__progress_bar"><p></p></div>' +
-                '<label class="__progress_text">Загрузка файла</label>' +
-                '<label class="__progress_bytes"></label>' +
-                '</li>');
-            } else {
-                fileAdded(file);
-            }
-        });
-        zone.on('uploadprogress', function(file, percent, bytesSent){
-            if (uploadProgress === undefined) {
-                if (progressBars.elements[0]) {
-                    var process = progressBars.elements[0];
-                    var bytes = progressBytes.elements[0];
-                    process.width(percent + '%');
-                    bytes.html(bytesSent + '/' + file.size + ' B');
-                    if (percent == 100) {
-
+                    xhr.open("POST", url, true);
+                    if (sending === undefined) {
+                        xhr.setRequestHeader("Cache-Control", "no-cache");
+                        xhr.setRequestHeader("Content-Type", "multipart/form-data");
+                        xhr.setRequestHeader("X-File-Name", encodeURIComponent(file.name));
+                        xhr.setRequestHeader("X-File-Size", file.size);
+                        xhr.setRequestHeader("X-File-Type", file.type);
+                        // Add special async header
+                        xhr.setRequestHeader('SJSAsync', 'true');
+                    } else {
+                        sending(sjsElem, file, xhr);
                     }
-                }
-            } else {
-                uploadProgress(sjsElem, file, percent, bytesSent);
-            }
-        });
-        zone.on('success', function(response){
-            if (successFile === undefined) {
-                var block = progressBlock.elements[0];
-                block.removeClass('__upload_process');
-                block.addClass('__upload_complete');
-                var text = progressText.elements[0];
-                text.html('Загрузка завершена');
-                progressBlock.elements.splice(0, 1);
-                progressBars.elements.splice(0, 1);
-                progressText.elements.splice(0, 1);
-                progressBytes.elements.splice(0, 1);
-            } else {
-                successFile(response);
-            }
-        });
-        zone.on('queuecomplete', function(){
-            if (completeAll === undefined) {
 
-            } else {
-                completeAll(sjsElem);
+                    if (maxSize > file.size) {
+                        xhr.send(file);
+                    } else {
+                        (error === undefined) ? alert('File is too big!') : error(sjsElem, 'File is too big!');
+                    }
+                    xhr.onreadystatechange = function(){
+                        if (xhr.readyState == 4) {
+                            if (successFile === undefined) {
+                                progressBars.elements[_i].width('100%');
+                                progressTexts.elements[_i].html('Загрузка завершена');
+                                var block = progressBlocks.elements[_i];
+                                block.removeClass('__upload_process');
+                                block.addClass('__upload_complete');
+                            } else {
+                                successFile(xhr.response);
+                            }
+                            if ((_i == files.length - 1) && (completeAll != undefined)) {
+                                    completeAll(sjsElem);
+                            }
+                        }
+                    };
+
+                })(files[i], i);
             }
+
         });
     }
 
