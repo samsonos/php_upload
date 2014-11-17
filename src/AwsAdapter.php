@@ -11,6 +11,7 @@ use Aws\S3\S3Client;
 use Aws\Common\Credentials\Credentials;
 
 class AwsAdapter implements iAdapter {
+    public $adapterID = 'amazon';
     /** @var Credentials $credentials access key and secret key for amazon connect */
     protected $credentials;
 
@@ -64,5 +65,10 @@ class AwsAdapter implements iAdapter {
         ));
 
         return AwsAdapter::$awsUrl.'/'.$uploadDir;
+    }
+
+    public function getID()
+    {
+        return $this->adapterID;
     }
 }

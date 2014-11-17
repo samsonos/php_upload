@@ -31,14 +31,24 @@ class UploadConnector extends CompressableExternalModule
 
     public $awsUrl;
 
+    /** @var iAdapter  */
+    public $adapter;
+
     public function init(array $params = array())
     {
-        AwsAdapter::$accessKey = $this->accessKey;
-        AwsAdapter::$secretKey = $this->secretKey;
-        AwsAdapter::$bucket = $this->bucket;
-        AwsAdapter::$handler = $this->handler;
-        AwsAdapter::$awsUrl = $this->awsUrl;
-        Upload::$type = $this->adapterType;
+        if (!isset($this->adapter)) {
+            $this->adapter = new LocalAdapter();
+        } elseif ($this->adapter->getID() == 'amazon') {
+            AwsAdapter::$accessKey = $this->accessKey;
+            AwsAdapter::$secretKey = $this->secretKey;
+            AwsAdapter::$bucket = $this->bucket;
+            AwsAdapter::$awsUrl = $this->awsUrl;
+        }
+
+        if (isset($this->handler) && is_callable($this->handler)) {
+            Upload::$pathHandler = $this->handler;
+        }
+
         parent::init($params);
     }
 }

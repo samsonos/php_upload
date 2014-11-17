@@ -14,8 +14,6 @@ use samson\core\File;
  */
 class Upload
 {
-    public static $type;
-
     const UPLOAD_PATH = 'upload/';
 
 	/** Supported file extensions */
@@ -45,6 +43,8 @@ class Upload
 	/** Upload server path */
 	public $uploadDir = self::UPLOAD_PATH;
 
+    public static $pathHandler;
+
 	/**
 	 * Constructor
 	 * @param array $extensions Array of excepted extensions
@@ -55,17 +55,12 @@ class Upload
 		// Set file extension limitations
 		$this->extensions = $extensions;
 
-        if (Upload::$type == 'amazon') {
-            $this->adapter = new AwsAdapter();
-        } else {
-            $this->adapter = new LocalAdapter();
-        }
-
+        $this->adapter = m('samsonupload')->adapter;
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
 
-        if (Upload::$type == 'local') {
+        if ($this->adapter->getID() == 'local') {
             // If upload path does not exists - create it
             if (!file_exists($this->uploadDir)) {
                 mkdir($this->uploadDir, 0775, true);
@@ -119,6 +114,11 @@ class Upload
 		// Failure
 		return false; 
 	}
+
+    public function buildPath()
+    {
+        $this->uploadDir = call_user_func_array(Upload::$pathHandler, func_get_args());
+    }
 
     /**
      * Returns full file path to file.
