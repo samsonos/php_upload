@@ -36,6 +36,8 @@ class Upload
 
     /** @var File size */
     private $size;
+
+    public $adapter;
 	
 	/** Upload server path */
 	public $uploadDir = self::UPLOAD_PATH;
@@ -45,24 +47,29 @@ class Upload
 	 * @param array $extensions Array of excepted extensions
      * @param string $userDir Directory to save file
 	 */
-	public function __construct(array $extensions = array(), $userDir = null)
+	public function __construct(iAdapter $adapter, array $extensions = array(), $userDir = null)
 	{			
 		// Set file extension limitations
 		$this->extensions = $extensions;
 
+        $this->adapter = $adapter;
+
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
-		
-		// If upload path does not exsits - create it
-		if (!file_exists($this->uploadDir)) mkdir($this->uploadDir, 0775, true);
+
+        if ($this->adapter->getId() == 'local') {
+            // If upload path does not exsits - create it
+            if (!file_exists($this->uploadDir)) mkdir($this->uploadDir, 0775, true);
+        }
+
 	}
 	
 	/**
 	 * Perform file uploading logic
-     * @param string $filePath Uloaded file path
+     * @param string $filePath Uploaded file path
      * @param string $uploadName Uploaded file name real name to return on success upload
 	 * @param string $fileName Uploaded file name on server to return on success upload
-	 * @return boolean True if file succesfully uploaded
+	 * @return boolean True if file successfully uploaded
 	 */
 	public function upload( & $filePath = '', & $uploadName = '', & $fileName = '' )
 	{
@@ -76,16 +83,17 @@ class Upload
 			$this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
 			
 			// If we have no extension limitations or they are matched
-			if(!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
-				
-				// Generate filename
-				$this->fileName = strtolower(md5(time() . $this->realName) . '.' . $this->extension);
-				// Generate unique hashed file name for storing on server
-				$this->filePath = $this->uploadDir . '/' . $this->fileName;
+			if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
+			    // Generate filename
+                $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
+
                 /** @var string $file */
                 $file = file_get_contents('php://input');
-				// Create file 
-				file_put_contents($this->filePath, $file);
+
+                // Create file
+                $this->filePath = $this->adapter->putContent($file, $this->fileName, $this->uploadDir);
+
+                // Save image size and mimeType
                 $this->size = $_SERVER['HTTP_X_FILE_SIZE'];
                 $this->mimeType = $_SERVER['HTTP_X_FILE_TYPE'];
 
@@ -93,10 +101,9 @@ class Upload
                 $filePath = $this->filePath;
                 $uploadName = $this->realName;
                 $fileName = $this->fileName;
-                //
 
-				// Success
-				return true;
+                // Success
+                return true;
 			}
 		}
 
