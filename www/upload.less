@@ -9,25 +9,23 @@
   line-height: 160px;
   text-align: center;
 
-  &:hover { background-color:rgba(0,0,0,0.05); }
+  .__upload_text {
+    display: inline-block;
+    line-height: 17px;
 
-  /* File field for uploading */
-//  &>.__image-upload{
-//    width: 100%;
-//    height: 100%;
-//    position: absolute;
-//    top: 0px;
-//    left: 0px;
-//    .opacity(0);
-//    z-index: 9;
-////    cursor: pointer;
-//  }
+    /* Progress text */
+    & > .__progress_text {
+      font-weight: bold;
+      display: block
+    }
 
-  /* Progress text */
-  &>.__progress_text { font-weight:bold; display: block }
-
-  /* Bytes sent in progress */
-  &>.__progress_bytes { font-weight:normal; font-size: 10px; display: block }
+    /* Bytes sent in progress */
+    & > .__progress_bytes {
+      font-weight: normal;
+      font-size: 10px;
+      display: block
+    }
+  }
 
   /* Loading bar */
   &>.__progress_bar{
@@ -44,4 +42,27 @@
       width: 0px;
     }
   }
+}
+
+.__btn_upload {
+  height: 100%;
+  width: 100%;
+
+  &:hover { background-color:rgba(0,0,0,0.05); }
+
+  /* File field for uploading */
+
+  &>.__input_file{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    .opacity(0);
+    z-index: 9;
+    cursor: pointer;
+  }
+
+  /* Progress text */
+  &>.__progress_text { font-weight:bold; }
 }

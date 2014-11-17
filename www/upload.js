@@ -99,10 +99,9 @@ var uploadFileHandler = function( selector, options )
                 xhr.setRequestHeader("X-File-Name", encodeURIComponent(file.name));
                 xhr.setRequestHeader("X-File-Size", file.size);
                 xhr.setRequestHeader("X-File-Type", file.type);
-                //xhr.setRequestHeader("Content-Type", "application/octet-stream");
                 // Add special async header
                 xhr.setRequestHeader('SJSAsync', 'true');
-                s.trace(file.size);
+
                 if (file.size < maxsize) {
                     xhr.send(file);
                 } else {

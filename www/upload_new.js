@@ -124,9 +124,10 @@ var sjsFileUpload = {
         url = (url === undefined) ? (elem.hasAttribute('__action_upload')) ? elem.getAttribute('__action_upload') : '/upload' : url;
 
         if (inputSelector === undefined) {
-            sjsElem.append('<input class="__input_file" type="file" multiple>' +
-            '<div class="__progress_bar"><p></p></div>' +
-            '<label class="__progress_text">Загрузить файл</label>');
+            sjsElem.append('<div class="__btn_upload">' +
+            '<input class="__input_file" type="file" multiple>' +
+            '<label class="__progress_text">Загрузить файл</label>' +
+            '</div>');
             input = s('.__input_file', sjsElem);
         } else {
             input = s(inputSelector);
@@ -136,17 +137,24 @@ var sjsFileUpload = {
 
             files = input.DOMElement.files;
 
-            if (start != undefined) { start(files) }
+            if (start === undefined) {
+                //console.log(sjsElem.parent);
+            } else {
+                start(sjsElem, files)
+            }
+            sjsElem.css('display', 'none');
 
             // Create blocks and call user function on file add
             for (var i = 0; i < files.length; i++) {
                 (function(file){
                     if (fileAdded === undefined) {
-                        sjsElem.parent().append('<li class="__upload_process">' +
+                        sjsElem.parent().append('<div class="__upload_process">' +
                         '<div class="__progress_bar"><p></p></div>' +
+                        '<div class="__upload_text">' +
                         '<label class="__progress_text">Загрузка файла</label>' +
                         '<label class="__progress_bytes"></label>' +
-                        '</li>');
+                        '</div>' +
+                        '</div>');
                     } else {
                         fileAdded(sjsElem, file);
                     }
@@ -199,6 +207,7 @@ var sjsFileUpload = {
                         xhr.send(file);
                     } else {
                         (error === undefined) ? alert('File is too big!') : error(sjsElem, 'File is too big!');
+                        if (completeAll != undefined) { completeAll(sjsElem); }
                     }
                     xhr.onreadystatechange = function(){
                         if (xhr.readyState == 4) {
@@ -212,7 +221,11 @@ var sjsFileUpload = {
                                 successFile(xhr.response);
                             }
                             if ((_i == files.length - 1) && (completeAll != undefined)) {
-                                    completeAll(sjsElem);
+                                var parent = elem.parentNode;
+                                parent.removeChild(elem);
+                                parent.appendChild(elem);
+                                completeAll(sjsElem);
+
                             }
                         }
                     };

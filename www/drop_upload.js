@@ -156,11 +156,13 @@ var sjsDropFileUpload = {
         });
         zone.on('addedfile', function(file){
             if (fileAdded === undefined) {
-                sjsElem.append('<li class="__upload_process">' +
+                sjsElem.append('<div class="__upload_process">' +
                 '<div class="__progress_bar"><p></p></div>' +
+                '<div class="__upload_text">' +
                 '<label class="__progress_text">Загрузка файла</label>' +
                 '<label class="__progress_bytes"></label>' +
-                '</li>');
+                '</div>' +
+                '</div>');
                 progressBlock = s('.__upload_process');
                 progressBars = s('.__progress_bar p', progressBlock);
                 progressText = s('.__progress_text', progressBlock);
