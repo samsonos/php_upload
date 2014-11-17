@@ -94,6 +94,9 @@ class Upload
                 /** @var string $file */
                 $file = file_get_contents('php://input');
 
+                if ($this->uploadDir == '') {
+                    $this->uploadDir = Upload::UPLOAD_PATH;
+                }
                 // Create file
                 $this->filePath = $this->adapter->putContent($file, $this->fileName, $this->uploadDir);
 
