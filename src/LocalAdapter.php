@@ -12,12 +12,9 @@ namespace samson\upload;
 class LocalAdapter implements iAdapter {
     public function putContent($data, $filename = '', $uploadDir = '')
     {
-        // Generate unique hashed file name for storing on server
-        $filePath = $uploadDir.'/'.$filename;
-
         // Put file
-        file_put_contents($filePath, $data);
+        file_put_contents($uploadDir.'/'.$filename, $data);
 
-        return $filePath;
+        return $uploadDir;
     }
 }
