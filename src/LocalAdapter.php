@@ -13,7 +13,7 @@ class LocalAdapter implements iAdapter {
     public function putContent($data, $filename = '', $uploadDir = '')
     {
         // Generate unique hashed file name for storing on server
-        $filePath = $this->$uploadDir.'/'.$filename;
+        $filePath = $uploadDir.'/'.$filename;
 
         // Put file
         file_put_contents($filePath, $data);

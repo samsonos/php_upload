@@ -107,7 +107,7 @@ class Upload
                 $this->mimeType = $_SERVER['HTTP_X_FILE_TYPE'];
 
                 // store data for output
-                $filePath = $this->filePath;
+                $filePath = $this->filePath.'/'.$this->fileName;
                 $uploadName = $this->realName;
                 $fileName = $this->fileName;
 
