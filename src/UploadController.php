@@ -16,7 +16,7 @@ class UploadController extends CompressableExternalModule
     public $id = 'samson_upload';
 
     /** @var string FileSystem adapter class name */
-    public $adapterType = 'LocalAdapter';
+    public $adapterType = '\samson\upload\LocalAdapter';
 
     /** @var  array Collection of adapter specific parameters */
     public $adapterParameters = array();
@@ -35,9 +35,9 @@ class UploadController extends CompressableExternalModule
     public function init(array $params = array())
     {
         // Check if NOT current Adapter is supported
-        if (!class_exists($this->adapter)) {
+        if (!class_exists($this->adapterType)) {
             // Use default adapter
-            $this->adapterType = 'LocalAdapter';
+            $this->adapterType = '\samson\upload\LocalAdapter';
         }
 
         // Create adapter instance and pass all its possible parameters
