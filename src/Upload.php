@@ -1,9 +1,6 @@
 <?php
 namespace samson\upload;
 
-use samson\core\iModuleViewable;
-use samson\core\File;
-
 /**
  * Generic file uploader
  *
@@ -33,11 +30,11 @@ class Upload
     /** @var string extension */
     private $extension;
 
-    /** @var File size */
+    /** @var int File size */
     private $size;
 
-    /** @var iAdapter  */
-    public $adapter;
+    /** @var UploadController Pointer to module controller */
+    public $parent;
 
     /** Upload server path */
     public $uploadDir = self::UPLOAD_PATH;
@@ -54,7 +51,7 @@ class Upload
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
         // Get current upload adapter
-        $this->adapter = & m('samsonupload')->adapter;
+        $this->parent = & m('samson_upload');
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
@@ -66,6 +63,7 @@ class Upload
      * @param string $uploadName Uploaded file name real name to return on success upload
      * @param string $fileName Uploaded file name on server to return on success upload
      * @return boolean True if file successfully uploaded
+     * TODO: Should be renamed and deprecated, must be converted to protected and called via __constructor
      */
     public function upload(& $filePath = '', & $uploadName = '', & $fileName = '')
     {
@@ -87,9 +85,9 @@ class Upload
                 $file = file_get_contents('php://input');
 
                 // Create file
-                $this->filePath = $this->adapter->putContent($file, $this->fileName, $this->uploadDir);
+                $this->filePath = $this->parent->adapter->write($file, $this->fileName, $this->uploadDir);
 
-                // Save image size and mimeType
+                // Save size and mimeType
                 $this->size = $_SERVER['HTTP_X_FILE_SIZE'];
                 $this->mimeType = $_SERVER['HTTP_X_FILE_TYPE'];
 
@@ -105,11 +103,6 @@ class Upload
 
         // Failure
         return false;
-    }
-
-    public function buildPath()
-    {
-        $this->uploadDir = call_user_func_array(Upload::$pathHandler, func_get_args());
     }
 
     /** @return string Full path to file  */
