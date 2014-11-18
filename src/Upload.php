@@ -36,14 +36,16 @@ class Upload
     /** Upload server path */
     public $uploadDir = 'upload/';
 
-
     /**
      * Constructor
-     * @param array $extensions Array of excepted extensions
-     * @param string $userDir Directory to save file
+     * @param mixed $extensions Collection or single excepted extension
+     * @param mixed $relPathParameters Data to be passed to external rel. path builder
      */
-    public function __construct(array $extensions = array(), $userDir = null)
+    public function __construct($extensions = array(), $relPathParameters = null)
     {
+        // Build relative path for uploading
+        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $relPathParameters);
+
         // Set file extension limitations, form array if isn't an array
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
@@ -52,6 +54,22 @@ class Upload
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
+    }
+
+    /**
+     * Build and set upload relative path
+     * @return mixed|string
+     */
+    public function setRelativePath()
+    {
+        // If we have external relative path builder
+        if (is_callable($this->parent->handler)) {
+            // Call external handler and pass all parameters to it
+            $this->uploadDir = call_user_func_array($this->parent->handler, func_get_args());
+        }
+
+        // Return current upload relative path
+        return $this->uploadDir;
     }
 
     /**
@@ -69,7 +87,6 @@ class Upload
 
         // If upload data exists
         if (isset($this->realName)) {
-
             // Get file extension
             $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
 
@@ -103,9 +120,9 @@ class Upload
     }
 
     /** @return string Full path to file  */
-    public function realPath()
+    public function path()
     {
-        return $this->filePath;
+        return $this->filePath.'/';
     }
 
     /** @return string Full path to file with file name */

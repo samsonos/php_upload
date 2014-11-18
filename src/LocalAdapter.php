@@ -19,10 +19,10 @@ class LocalAdapter implements IAdapter
      * @see \samson\upload\iAdapter::init()
      * @return mixed|void
      */
-    public function init($uploadDir)
+    public function init($uploadDir = null)
     {
         // If upload path does not exists - create it
-        if (!file_exists($uploadDir)) {
+        if (isset($uploadDir) && !file_exists($uploadDir)) {
             mkdir($uploadDir, 0775, true);
         }
     }
