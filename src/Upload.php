@@ -14,10 +14,11 @@ use samson\core\File;
  */
 class Upload
 {
+    /** Generic relative upload path */
     const UPLOAD_PATH = 'upload/';
 
-	/** Supported file extensions */
-	protected $extensions = array();
+    /** Supported file extensions */
+    protected $extensions = array();
 
     /** @var string real file path */
     private $filePath;
@@ -39,64 +40,54 @@ class Upload
 
     /** @var iAdapter  */
     public $adapter;
-	
-	/** Upload server path */
-	public $uploadDir = self::UPLOAD_PATH;
 
-    public static $pathHandler;
+    /** Upload server path */
+    public $uploadDir = self::UPLOAD_PATH;
 
-	/**
-	 * Constructor
-	 * @param array $extensions Array of excepted extensions
+
+    /**
+     * Constructor
+     * @param array $extensions Array of excepted extensions
      * @param string $userDir Directory to save file
-	 */
-	public function __construct(array $extensions = array(), $userDir = null)
-	{			
-		// Set file extension limitations
-		$this->extensions = $extensions;
+     */
+    public function __construct(array $extensions = array(), $userDir = null)
+    {
+        // Set file extension limitations, form array if isn't an array
+        $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
-        $this->adapter = m('samsonupload')->adapter;
+        // Get current upload adapter
+        $this->adapter = & m('samsonupload')->adapter;
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
+    }
 
-        if ($this->adapter->getID() == 'local') {
-            // If upload path does not exists - create it
-            if (!file_exists($this->uploadDir)) {
-                mkdir($this->uploadDir, 0775, true);
-            }
-        }
-	}
-	
-	/**
-	 * Perform file uploading logic
+    /**
+     * Perform file uploading logic
      * @param string $filePath Uploaded file path
      * @param string $uploadName Uploaded file name real name to return on success upload
-	 * @param string $fileName Uploaded file name on server to return on success upload
-	 * @return boolean True if file successfully uploaded
-	 */
-	public function upload( & $filePath = '', & $uploadName = '', & $fileName = '' )
-	{
-		// Try to get upload file with new upload method
-		$this->realName = urldecode($_SERVER['HTTP_X_FILE_NAME']);
+     * @param string $fileName Uploaded file name on server to return on success upload
+     * @return boolean True if file successfully uploaded
+     */
+    public function upload(& $filePath = '', & $uploadName = '', & $fileName = '')
+    {
+        // Try to get upload file with new upload method
+        $this->realName = urldecode($_SERVER['HTTP_X_FILE_NAME']);
 
-		// If upload data exists
-		if (isset($this->realName)) {
+        // If upload data exists
+        if (isset($this->realName)) {
 
-			// Get file extension
-			$this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
-			
-			// If we have no extension limitations or they are matched
-			if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
-			    // Generate filename
+            // Get file extension
+            $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
+
+            // If we have no extension limitations or they are matched
+            if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
+                // Generate filename
                 $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
 
-                /** @var string $file */
+                /** @var string $file Read uploaded file */
                 $file = file_get_contents('php://input');
 
-                if ($this->uploadDir == '') {
-                    $this->uploadDir = Upload::UPLOAD_PATH;
-                }
                 // Create file
                 $this->filePath = $this->adapter->putContent($file, $this->fileName, $this->uploadDir);
 
@@ -105,33 +96,31 @@ class Upload
                 $this->mimeType = $_SERVER['HTTP_X_FILE_TYPE'];
 
                 // store data for output
-                $filePath = $this->filePath.'/'.$this->fileName;
-                $uploadName = $this->realName;
-                $fileName = $this->fileName;
+                $filePath = $this->fullPath();
+                $uploadName = $this->name();
+                $fileName = $this->realName();
 
                 // Success
                 return true;
-			}
-		}
+            }
+        }
 
-		// Failure
-		return false; 
-	}
+        // Failure
+        return false;
+    }
 
     public function buildPath()
     {
         $this->uploadDir = call_user_func_array(Upload::$pathHandler, func_get_args());
     }
 
-    /**
-     * Returns full file path to file.
-     * @return string File path.
-     */
+    /** @return string Full path to file  */
     public function realPath()
     {
         return $this->filePath;
     }
 
+    /** @return string Full path to file with file name */
     public function fullPath()
     {
         return $this->filePath.'/'.$this->fileName;
