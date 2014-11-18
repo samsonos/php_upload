@@ -27,6 +27,9 @@ class UploadController extends CompressableExternalModule
     /** @var  callable External handler to build relative file path */
     public $handler;
 
+    /** @var string Prefix for image path saving in db */
+    public $pathPrefix = '/cms/';
+
     /**
      * Initialize module
      * @param array $params Collection of module parameters
