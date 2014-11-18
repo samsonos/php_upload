@@ -9,9 +9,6 @@ namespace samson\upload;
  */
 class Upload
 {
-    /** Generic relative upload path */
-    const UPLOAD_PATH = 'upload/';
-
     /** Supported file extensions */
     protected $extensions = array();
 
@@ -37,7 +34,7 @@ class Upload
     public $parent;
 
     /** Upload server path */
-    public $uploadDir = self::UPLOAD_PATH;
+    public $uploadDir = 'upload/';
 
 
     /**
