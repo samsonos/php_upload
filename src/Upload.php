@@ -43,14 +43,18 @@ class Upload
      */
     public function __construct($extensions = array(), $relPathParameters = null)
     {
-        // Build relative path for uploading
-        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $relPathParameters);
+        if (!is_array($relPathParameters)) {
+            $relPathParameters = array($relPathParameters);
+        }
 
         // Set file extension limitations, form array if isn't an array
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
         // Get current upload adapter
         $this->parent = & m('samson_upload');
+
+        // Build relative path for uploading
+        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $relPathParameters);
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
@@ -122,7 +126,7 @@ class Upload
     /** @return string Full path to file  */
     public function path()
     {
-        return $this->filePath.'/';
+        return $this->filePath;
     }
 
     /** @return string Full path to file with file name */

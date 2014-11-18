@@ -46,7 +46,16 @@ class UploadController extends CompressableExternalModule
         // Initialize adapter
         $this->adapter->init($this->adapterParameters);
 
+        if (!isset($this->handler) || !is_callable($this->handler)) {
+            $this->handler = array($this, 'defaultHandler');
+        }
+
         // Call parent initialization
         parent::init($params);
+    }
+
+    public function defaultHandler()
+    {
+        return 'upload';
     }
 }
