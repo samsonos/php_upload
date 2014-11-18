@@ -3,7 +3,7 @@ namespace samson\upload;
 
 /**
  * Generic file uploader
- *
+ * @package samson\upload
  * @author Vitaly Iegorov <egorov@samsonos.com>
  * @author Nikita Kotenko <kotenko@samsonos.com>
  */

@@ -27,7 +27,6 @@ class LocalAdapter implements IAdapter
         }
     }
 
-
     /**
      * @param mixed $data
      * @param string $filename
