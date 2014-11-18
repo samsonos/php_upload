@@ -5,17 +5,15 @@ use samson\core\CompressableExternalModule;
 use samson\core\iModuleViewable;
 
 /**
- * Интерфейс для подключения модуля в ядро фреймворка SamsonPHP
+ * SamsonPHP Upload module
  *
  * @package SamsonPHP
- * @author Vitaly Iegorov <vitalyiegorov@gmail.com>
- * @author Nikita Kotenko <nick.w2r@gmail.com>
- * @version 0.1
+ * @author Vitaly Iegorov <egorov@samsonos.com>
  */
 class UploadController extends CompressableExternalModule
 {
     /** @var string Module identifier */
-    protected $id = 'samson_upload';
+    public $id = 'samson_upload';
 
     /** @var string FileSystem adapter class name */
     public $adapterType = 'LocalAdapter';

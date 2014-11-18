@@ -21,5 +21,4 @@ function uploadFile(&$upload, $extensions = array(), $userDir = '')
 
     // Return upload result
     return $upload->upload();
-
 }

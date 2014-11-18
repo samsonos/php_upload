@@ -7,8 +7,8 @@ namespace samson\upload;
  *
  * @package samson\upload
  */
-interface iAdapter {
-
+interface IAdapter
+{
     /**
      * Adapter initialization
      * @param mixed $params collection or parameter for initialization of adapter.

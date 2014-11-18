@@ -12,10 +12,13 @@ namespace samson\upload;
  * Local file system adapter implementation
  * @package samson\upload
  */
-class LocalAdapter implements iAdapter {
-
-
-    /** @see \samson\upload\iAdapter::init() */
+class LocalAdapter implements IAdapter
+{
+    /**
+     * @param mixed $uploadDir
+     * @see \samson\upload\iAdapter::init()
+     * @return mixed|void
+     */
     public function init($uploadDir)
     {
         // If upload path does not exists - create it
@@ -24,7 +27,14 @@ class LocalAdapter implements iAdapter {
         }
     }
 
-    /** @see \samson\upload\iAdapter::write() */
+
+    /**
+     * @param mixed $data
+     * @param string $filename
+     * @param string $uploadDir
+     * @see \samson\upload\iAdapter::write()
+     * @return bool|string
+     */
     public function write($data, $filename = '', $uploadDir = '')
     {
         // Build path to writing file

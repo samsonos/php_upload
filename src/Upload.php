@@ -7,10 +7,8 @@ use samson\core\File;
 /**
  * Generic file uploader
  *
- * @author Vitaly Iegorov <vitalyiegorov@gmail.com>
- * @author Nikita Kotenko <nick.w2r@gmail.com>
- *
- * @version 0.0.2
+ * @author Vitaly Iegorov <egorov@samsonos.com>
+ * @author Nikita Kotenko <kotenko@samsonos.com>
  */
 class Upload
 {
