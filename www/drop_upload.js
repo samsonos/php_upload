@@ -205,8 +205,9 @@ var sjsDropFileUpload = {
                 completeAll(sjsElem);
             }
         });
-        zone.on('error', function(msg){
-            (error === undefined) ? alert(msg) : error(sjsElem, msg);
+        zone.on('error', function(file, msg){
+            (error === undefined) ? alert(msg) : error(sjsElem, file, msg);
+            console.log(msg);
         });
     }
 
