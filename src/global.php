@@ -7,20 +7,18 @@
 use \samson\upload\Upload;
 
 /**
- * @param Upload $upload
- * @param array $extensions
- * @param string $userDir
- * @return bool
+ * Perform file uploading.
+ * This function is a shortcut that avoids new Upload() object creation.
+ * @param Upload $upload Waiting for upload object to be returned
+ * @param mixed $extensions Collection of supported extensions, one extension is also supported
+ * @param mixed $relativePathParameters Collection of parameters to be passed to external rel. path builder
+ * @return bool True if file was successfully uploaded
  */
-function uploadFile(Upload &$upload, $extensions = array(), $userDir = '')
+function uploadFile(&$upload, $extensions = array(), $relativePathParameters = null)
 {
-    // Form array if isn't an array
-    $extensions = is_array($extensions) ? $extensions : array($extensions);
-
     // Create new Upload object
-    $upload = new Upload($extensions, $userDir);
+    $upload = new Upload($extensions, $relativePathParameters);
 
     // Return upload result
     return $upload->upload();
-
 }

@@ -1,23 +1,16 @@
 <?php
 namespace samson\upload;
 
-use samson\core\iModuleViewable;
-use samson\core\File;
-
 /**
  * Generic file uploader
- *
- * @author Vitaly Iegorov <vitalyiegorov@gmail.com>
- * @author Nikita Kotenko <nick.w2r@gmail.com>
- *
- * @version 0.0.2
+ * @package samson\upload
+ * @author Vitaly Iegorov <egorov@samsonos.com>
+ * @author Nikita Kotenko <kotenko@samsonos.com>
  */
 class Upload
-{	
-	const UPLOAD_PATH = 'upload/';
-
-	/** Supported file extensions */
-	protected $extensions = array();
+{
+    /** Supported file extensions */
+    protected $extensions = array();
 
     /** @var string real file path */
     private $filePath;
@@ -34,83 +27,112 @@ class Upload
     /** @var string extension */
     private $extension;
 
-    /** @var File size */
+    /** @var int File size */
     private $size;
-	
-	/** Upload server path */
-	public $uploadDir = self::UPLOAD_PATH;
 
-	/**
-	 * Constructor
-	 * @param array $extensions Array of excepted extensions
-     * @param string $userDir Directory to save file
-	 */
-	public function __construct(array $extensions = array(), $userDir = null)
-	{			
-		// Set file extension limitations
-		$this->extensions = $extensions;
+    /** @var UploadController Pointer to module controller */
+    public $parent;
+
+    /** Upload server path */
+    public $uploadDir = 'upload/';
+
+    /**
+     * Constructor
+     * @param mixed $extensions Collection or single excepted extension
+     * @param mixed $relPathParameters Data to be passed to external rel. path builder
+     */
+    public function __construct($extensions = array(), $relPathParameters = null)
+    {
+        if (!is_array($relPathParameters)) {
+            $relPathParameters = array($relPathParameters);
+        }
+
+        // Set file extension limitations, form array if isn't an array
+        $this->extensions = is_array($extensions) ? $extensions : array($extensions);
+
+        // Get current upload adapter
+        $this->parent = & m('samson_upload');
+
+        // Build relative path for uploading
+        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $relPathParameters);
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
-		
-		// If upload path does not exsits - create it
-		if (!file_exists($this->uploadDir)) mkdir($this->uploadDir, 0775, true);
-	}
-	
-	/**
-	 * Perform file uploading logic
-     * @param string $filePath Uloaded file path
+    }
+
+    /**
+     * Build and set upload relative path
+     * @return mixed|string
+     */
+    public function setRelativePath()
+    {
+        // If we have external relative path builder
+        if (is_callable($this->parent->handler)) {
+            // Call external handler and pass all parameters to it
+            $this->uploadDir = call_user_func_array($this->parent->handler, func_get_args());
+        }
+
+        // Return current upload relative path
+        return $this->uploadDir;
+    }
+
+    /**
+     * Perform file uploading logic
+     * @param string $filePath Uploaded file path
      * @param string $uploadName Uploaded file name real name to return on success upload
-	 * @param string $fileName Uploaded file name on server to return on success upload
-	 * @return boolean True if file succesfully uploaded
-	 */
-	public function upload( & $filePath = '', & $uploadName = '', & $fileName = '' )
-	{
-		// Try to get upload file with new upload method
-		$this->realName = urldecode($_SERVER['HTTP_X_FILE_NAME']);
+     * @param string $fileName Uploaded file name on server to return on success upload
+     * @return boolean True if file successfully uploaded
+     * TODO: Should be renamed and deprecated, must be converted to protected and called via __constructor
+     */
+    public function upload(& $filePath = '', & $uploadName = '', & $fileName = '')
+    {
+        // Try to get upload file with new upload method
+        $this->realName = urldecode($_SERVER['HTTP_X_FILE_NAME']);
 
-		// If upload data exists
-		if (isset($this->realName)) {
+        // If upload data exists
+        if (isset($this->realName)) {
+            // Get file extension
+            $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
 
-			// Get file extension
-			$this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
-			
-			// If we have no extension limitations or they are matched
-			if(!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
-				
-				// Generate filename
-				$this->fileName = strtolower(md5(time() . $this->realName) . '.' . $this->extension);
-				// Generate unique hashed file name for storing on server
-				$this->filePath = $this->uploadDir . '/' . $this->fileName;
-                /** @var string $file */
+            // If we have no extension limitations or they are matched
+            if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
+                // Generate filename
+                $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
+
+                /** @var string $file Read uploaded file */
                 $file = file_get_contents('php://input');
-				// Create file 
-				file_put_contents($this->filePath, $file);
+
+                // Create file
+                $this->filePath = $this->parent->adapter->write($file, $this->fileName, $this->uploadDir);
+
+                // Save size and mimeType
                 $this->size = $_SERVER['HTTP_X_FILE_SIZE'];
                 $this->mimeType = $_SERVER['HTTP_X_FILE_TYPE'];
 
                 // store data for output
-                $filePath = $this->filePath;
-                $uploadName = $this->realName;
-                $fileName = $this->fileName;
-                //
+                $filePath = $this->fullPath();
+                $uploadName = $this->name();
+                $fileName = $this->realName();
 
-				// Success
-				return true;
-			}
-		}
+                // Success
+                return true;
+            }
+        }
 
-		// Failure
-		return false; 
-	}
+        // Failure
+        return false;
+    }
 
-    /**
-     * Returns full file path to file.
-     * @return string File path.
-     */
-    public function realPath()
+    /** @return string Full path to file  */
+    public function path()
     {
-        return $this->filePath;
+        return $this->parent->pathPrefix.$this->filePath;
+    }
+
+    /** @return string Full path to file with file name */
+    public function fullPath()
+    {
+        return $this->filePath.'/'.$this->fileName;
     }
 
     /**
