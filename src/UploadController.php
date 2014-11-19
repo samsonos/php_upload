@@ -28,7 +28,7 @@ class UploadController extends CompressableExternalModule
     public $handler;
 
     /** @var string Prefix for image path saving in db */
-    public $pathPrefix = '/cms/';
+    public $pathPrefix = __SAMSON_BASE__;
 
     /**
      * Initialize module
@@ -57,6 +57,10 @@ class UploadController extends CompressableExternalModule
         parent::init($params);
     }
 
+    /**
+     * Default relative path builder handler
+     * @return string Relative path for uploading
+     */
     public function defaultHandler()
     {
         return 'upload';
