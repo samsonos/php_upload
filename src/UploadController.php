@@ -13,19 +13,16 @@ use samson\core\iModuleViewable;
 class UploadController extends CompressableExternalModule
 {
     /** @var string Module identifier */
-    public $id = 'samson_upload';
-
-    /** @var string FileSystem adapter class name */
-    public $adapterType = '\samson\fs\LocalAdapter';
-
-    /** @var iAdapter Pointer to current file system adapter */
-    public $adapter;
+    public $id = 'upload';
 
     /** @var  callable External handler to build relative file path */
     public $handler;
 
     /** @var string Prefix for image path saving in db */
     public $pathPrefix = __SAMSON_BASE__;
+
+    /** @var \samson\fs\FileSystemController Pointer to file system module */
+    public $fs;
 
     /**
      * Initialize module
@@ -34,15 +31,10 @@ class UploadController extends CompressableExternalModule
      */
     public function init(array $params = array())
     {
-        // Check if NOT current Adapter is supported
-        if (!class_exists($this->adapterType)) {
-            // Use default adapter
-            $this->adapterType = '\samson\fs\LocalAdapter';
-        }
+        // Store pointer to file system module
+        $this->fs = & m('fs');
 
-        // Create adapter instance and pass all its possible parameters
-        $this->adapter = new $this->adapterType();
-
+        // If no valid handler is passed - use generic handler
         if (!isset($this->handler) || !is_callable($this->handler)) {
             $this->handler = array($this, 'defaultHandler');
         }
