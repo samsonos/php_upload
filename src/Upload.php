@@ -51,7 +51,7 @@ class Upload
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
         // Get current upload adapter
-        $this->parent = & m('samson_upload');
+        $this->parent = & m('upload');
 
         // Build relative path for uploading
         $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $relPathParameters);
@@ -103,7 +103,7 @@ class Upload
                 $file = file_get_contents('php://input');
 
                 // Create file
-                $this->filePath = $this->parent->adapter->write($file, $this->fileName, $this->uploadDir);
+                $this->filePath = $this->parent->write($file, $this->fileName, $this->uploadDir);
 
                 // Save size and mimeType
                 $this->size = $_SERVER['HTTP_X_FILE_SIZE'];
