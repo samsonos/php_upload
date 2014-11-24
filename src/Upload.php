@@ -103,7 +103,7 @@ class Upload
                 $file = file_get_contents('php://input');
 
                 // Create file
-                $this->filePath = $this->parent->write($file, $this->fileName, $this->uploadDir);
+                $this->filePath = $this->parent->fs->write($file, $this->fileName, $this->uploadDir);
 
                 // Save size and mimeType
                 $this->size = $_SERVER['HTTP_X_FILE_SIZE'];
