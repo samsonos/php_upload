@@ -36,6 +36,9 @@ class Upload
     /** Upload server path */
     public $uploadDir = 'upload/';
 
+    /** @var array Parameters for callable handlers */
+    protected $relPathParameters = array();
+
     /**
      * Constructor
      * @param mixed $extensions Collection or single excepted extension
@@ -47,6 +50,8 @@ class Upload
             $relPathParameters = array($relPathParameters);
         }
 
+        $this->relPathParameters = $relPathParameters;
+
         // Set file extension limitations, form array if isn't an array
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
@@ -54,7 +59,7 @@ class Upload
         $this->parent = & m('upload');
 
         // Build relative path for uploading
-        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $relPathParameters);
+        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $this->relPathParameters);
 
         // Try to reset directory
         $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
@@ -67,9 +72,9 @@ class Upload
     public function setRelativePath()
     {
         // If we have external relative path builder
-        if (is_callable($this->parent->handler)) {
+        if (is_callable($this->parent->uploadDirHandler)) {
             // Call external handler and pass all parameters to it
-            $this->uploadDir = call_user_func_array($this->parent->handler, func_get_args());
+            $this->uploadDir = call_user_func_array($this->parent->uploadDirHandler, func_get_args());
         }
 
         // Return current upload relative path
@@ -96,8 +101,15 @@ class Upload
 
             // If we have no extension limitations or they are matched
             if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
-                // Generate filename
-                $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
+                // If we have callable handler for generating file name
+                if (isset($this->parent->fileNameHandler) && is_callable($this->parent->fileNameHandler)) {
+                    array_push($this->relPathParameters, $this->extension);
+                    // Call handler and create fileName
+                    $this->fileName = call_user_func_array($this->parent->fileNameHandler, $this->relPathParameters);
+                } else {
+                    // Generate filename
+                    $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
+                }
 
                 /** @var string $file Read uploaded file */
                 $file = file_get_contents('php://input');

@@ -16,12 +16,15 @@ class UploadController extends CompressableExternalModule
     public $id = 'upload';
 
     /** @var  callable External handler to build relative file path */
-    public $handler;
+    public $uploadDirHandler;
 
     /** @var string Prefix for image path saving in db */
     public $pathPrefix = __SAMSON_BASE__;
 
-    /** @var \samson\fs\FileSystemController Pointer to file system module */
+    /** @var callable External handler to build file name */
+    public $fileNameHandler;
+
+    /** @var \samson\fs\FileService Pointer to file system module */
     public $fs;
 
     /**
@@ -34,9 +37,9 @@ class UploadController extends CompressableExternalModule
         // Store pointer to file system module
         $this->fs = & m('fs');
 
-        // If no valid handler is passed - use generic handler
-        if (!isset($this->handler) || !is_callable($this->handler)) {
-            $this->handler = array($this, 'defaultHandler');
+        // If no valid handlers are passed - use generic handlers
+        if (!isset($this->uploadDirHandler) || !is_callable($this->uploadDirHandler)) {
+            $this->uploadDirHandler = array($this, 'defaultDirHandler');
         }
 
         // Call parent initialization
@@ -47,7 +50,7 @@ class UploadController extends CompressableExternalModule
      * Default relative path builder handler
      * @return string Relative path for uploading
      */
-    public function defaultHandler()
+    public function defaultDirHandler()
     {
         return 'upload';
     }
