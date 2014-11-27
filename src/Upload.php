@@ -106,7 +106,8 @@ class Upload
                     array_push($this->relPathParameters, $this->extension);
                     // Call handler and create fileName
                     $this->fileName = call_user_func_array($this->parent->fileNameHandler, $this->relPathParameters);
-                } else {
+                }
+                if (!isset($this->fileName)) {
                     // Generate filename
                     $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
                 }
