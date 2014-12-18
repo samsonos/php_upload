@@ -52,6 +52,13 @@ class UploadController extends CompressableExternalModule
      */
     public function defaultDirHandler()
     {
-        return 'upload';
+        $path = 'upload';
+
+        // Create upload dir if it does not present
+        if (!$this->fs->exists($path)) {
+            $this->fs->mkDir($path);
+        }
+
+        return $path;
     }
 }

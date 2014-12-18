@@ -46,11 +46,8 @@ class Upload
      */
     public function __construct($extensions = array(), $relPathParameters = null)
     {
-        if (!is_array($relPathParameters)) {
-            $relPathParameters = array($relPathParameters);
-        }
-
-        $this->relPathParameters = $relPathParameters;
+        // Set additional relative path parameters
+        $this->relPathParameters = !is_array($relPathParameters) ? array($relPathParameters) : $relPathParameters;
 
         // Set file extension limitations, form array if isn't an array
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
@@ -59,26 +56,7 @@ class Upload
         $this->parent = & m('upload');
 
         // Build relative path for uploading
-        $this->uploadDir = call_user_func_array(array($this, 'setRelativePath'), $this->relPathParameters);
-
-        // Try to reset directory
-        $this->uploadDir = isset($userDir) ? $userDir : $this->uploadDir;
-    }
-
-    /**
-     * Build and set upload relative path
-     * @return mixed|string
-     */
-    public function setRelativePath()
-    {
-        // If we have external relative path builder
-        if (is_callable($this->parent->uploadDirHandler)) {
-            // Call external handler and pass all parameters to it
-            $this->uploadDir = call_user_func_array($this->parent->uploadDirHandler, func_get_args());
-        }
-
-        // Return current upload relative path
-        return $this->uploadDir;
+        $this->uploadDir = call_user_func_array($this->parent->uploadDirHandler, $this->relPathParameters);
     }
 
     /**
@@ -87,7 +65,6 @@ class Upload
      * @param string $uploadName Uploaded file name real name to return on success upload
      * @param string $fileName Uploaded file name on server to return on success upload
      * @return boolean True if file successfully uploaded
-     * TODO: Should be renamed and deprecated, must be converted to protected and called via __constructor
      */
     public function upload(& $filePath = '', & $uploadName = '', & $fileName = '')
     {
@@ -103,12 +80,14 @@ class Upload
             if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
                 // If we have callable handler for generating file name
                 if (isset($this->parent->fileNameHandler) && is_callable($this->parent->fileNameHandler)) {
+                    // Add file extension as last parameter
                     array_push($this->relPathParameters, $this->extension);
                     // Call handler and create fileName
                     $this->fileName = call_user_func_array($this->parent->fileNameHandler, $this->relPathParameters);
                 }
+
+                // If we have not created filename - generic generate it
                 if (!isset($this->fileName)) {
-                    // Generate filename
                     $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
                 }
 
