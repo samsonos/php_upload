@@ -187,7 +187,7 @@ var sjsFileUpload = {
                     });
 
                     uploadStatus.addEventListener('error', function(){
-                        (error === undefined) ? alert('Failed to upload file!') : error(sjsElem, 'Failed to upload file!');
+                        (error === undefined) ? alert('Невозможно загрузить файл!') : error(sjsElem, 'Failed to upload file!');
                     });
 
                     xhr.open("POST", url, true);
@@ -206,7 +206,7 @@ var sjsFileUpload = {
                     if (maxSize > file.size) {
                         xhr.send(file);
                     } else {
-                        (error === undefined) ? alert('File is too big!') : error(sjsElem, 'File is too big!');
+                        (error === undefined) ? alert('Файл слишком большой (' + file.size + 'B). Максимальный размер файла: ' + maxSize + 'B.') : error(sjsElem, 'File is too big!');
                         if (completeAll != undefined) { completeAll(sjsElem); }
                     }
                     xhr.onreadystatechange = function(){
