@@ -169,7 +169,7 @@ var sjsFileUpload = {
             for (i = 0; i < files.length; i++) {
 
                 xhr = new XMLHttpRequest();
-                (function(file, _i){
+                (function(file, _i, xhr){
                     loadPercent = 0;
                     uploadStatus = xhr.upload;
 
@@ -218,7 +218,7 @@ var sjsFileUpload = {
                                 block.removeClass('__upload_process');
                                 block.addClass('__upload_complete');
                             } else {
-                                successFile(xhr.response);
+                                successFile(xhr.response, progressBlocks.elements[_i]);
                             }
                             if ((_i == files.length - 1) && (completeAll != undefined)) {
                                 var parent = elem.parentNode;
@@ -230,7 +230,7 @@ var sjsFileUpload = {
                         }
                     };
 
-                })(files[i], i);
+                })(files[i], i, xhr);
             }
 
         });
