@@ -105,7 +105,9 @@ var uploadFileHandler = function( selector, options )
                 if (file.size < maxsize) {
                     xhr.send(file);
                 } else {
+                    showStatus('Ошибка загрузки файла');
                     alert('Слишом большой файл');
+                    if (options.error != undefined) options.error(file);
                 }
 
 
