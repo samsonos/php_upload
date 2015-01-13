@@ -9,7 +9,7 @@
 	"require":{
         "samsonos/js_core":"*",
         "samsonos/php_core":"1.*",
-        "samsonos/php_fs":"1.*"
+        "samsonphp/fs":"1.*"
     },
 	"license":"Open Software License (OSL) v 3.0",
 	"homepage":"http://samsonos.com/",
