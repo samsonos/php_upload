@@ -77,7 +77,6 @@ class MainTest extends \PHPUnit_Framework_TestCase
     public function testUploadFunctions()
     {
         $this->instance->init();
-        $this->instance->fileNameHandler = array($this, 'fileNameHandler');
         $this->instance->serverHandler = & $this->serverHandler;
 
         $this->serverHandler
@@ -93,6 +92,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
     public function testHandler()
     {
         $this->instance->init();
+        $this->instance->fileNameHandler = array($this, 'fileNameHandler');
         $this->instance->serverHandler = & $this->serverHandler;
 
         $this->serverHandler
@@ -118,5 +118,20 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $upload = new Upload(array(), 'myFile.png', $this->instance);
 
         $upload->upload($filePath, $uploadName, $fileName);
+    }
+
+    public function testExtension()
+    {
+        $this->instance->init();
+        $this->instance->serverHandler = & $this->serverHandler;
+
+        $this->serverHandler
+            ->expects($this->once())
+            ->method('name')
+            ->willReturn('tests/samsonos.png');
+
+        $upload = new Upload(array('xls', 'gif'), null, $this->instance);
+
+        $this->assertFalse($upload->upload());
     }
 }
