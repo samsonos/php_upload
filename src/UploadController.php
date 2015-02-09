@@ -24,8 +24,11 @@ class UploadController extends CompressableExternalModule
     /** @var callable External handler to build file name */
     public $fileNameHandler;
 
-    /** @var \samson\fs\FileService Pointer to file system module */
+    /** @var \samsonphp\fs\FileService Pointer to file system module */
     public $fs;
+
+    /** @var ServerHandler Server functions handler */
+    public $serverHandler;
 
     /**
      * Initialize module
@@ -41,6 +44,8 @@ class UploadController extends CompressableExternalModule
         if (!isset($this->uploadDirHandler) || !is_callable($this->uploadDirHandler)) {
             $this->uploadDirHandler = array($this, 'defaultDirHandler');
         }
+
+        $this->serverHandler = new ServerHandler();
 
         // Call parent initialization
         parent::init($params);
