@@ -23,44 +23,85 @@ class MainTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->instance = \samson\core\Service::getInstance('\samson\upload\UploadController');
+        $this->instance->fs = \samson\core\Service::getInstance('\samsonphp\fs\FileService');
+        $this->instance->fs->loadExternalService('\samsonphp\fs\LocalFileService');
     }
 
-   public function testUpload()
-   {
-       $this->instance->fs = \samson\core\Service::getInstance('\samsonphp\fs\FileService');
-       $this->instance->fs->loadExternalService('\samsonphp\fs\LocalFileService');
+    public function testUpload()
+    {
+        $this->instance->init();
+        $this->instance->serverHandler = & $this->serverHandler;
 
-       $this->instance->init();
-
-       $this->instance->serverHandler = & $this->serverHandler;
-
-       $this->serverHandler
+        $this->serverHandler
            ->expects($this->once())
            ->method('name')
            ->willReturn('tests/samsonos.png');
 
-       $this->serverHandler
+        $this->serverHandler
            ->expects($this->once())
            ->method('size')
            ->willReturn('16256');
 
-       $this->serverHandler
+        $this->serverHandler
            ->expects($this->once())
            ->method('file')
            ->willReturn(file_get_contents('tests/samsonos.png'));
 
-       $this->serverHandler
+        $this->serverHandler
            ->expects($this->once())
            ->method('type')
            ->willReturn('png');
 
-       $upload = new Upload(array(), null, $this->instance);
+        $upload = new Upload(array(), null, $this->instance);
 
-       $upload->upload($filePath, $uploadName, $fileName);
+        $upload->upload($filePath, $uploadName, $fileName);
 
-       //trace($filePath);
-       $this->assertEquals($fileName, 'tests/samsonos.png');
-   }
+        $this->assertEquals($fileName, 'tests/samsonos.png');
+        $this->assertNotNull($filePath);
+        $this->assertNotNull($uploadName);
+    }
+
+    public function testUploadFunctions()
+    {
+        $this->instance->init();
+        $this->instance->serverHandler = & $this->serverHandler;
+
+        $this->serverHandler
+            ->expects($this->once())
+            ->method('name')
+            ->willReturn('tests/samsonos.png');
+
+        $this->serverHandler
+            ->expects($this->once())
+            ->method('size')
+            ->willReturn('16256');
+
+        $this->serverHandler
+            ->expects($this->once())
+            ->method('file')
+            ->willReturn(file_get_contents('tests/samsonos.png'));
+
+        $this->serverHandler
+            ->expects($this->once())
+            ->method('type')
+            ->willReturn('png');
+
+        $upload = new Upload(array(), null, $this->instance);
+
+        $upload->upload($filePath, $uploadName, $fileName);
+
+        $upload->size();
+        $upload->path();
+        $upload->name();
+        $upload->fullPath();
+        $upload->realName();
+        $upload->mimeType();
+
+        $this->assertTrue($upload->extension('png'));
+        $this->assertEquals($upload->extension(), 'png');
+    }
+
+
 
    /* public function testUpload2()
     {
