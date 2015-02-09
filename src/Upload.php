@@ -68,6 +68,17 @@ class Upload
         $this->setUploadParams($filePath, $uploadName, $fileName);
     }
 
+    protected function setExternalName()
+    {
+        // If we have callable handler for generating file name
+        if (isset($this->config->fileNameHandler) && is_callable($this->config->fileNameHandler)) {
+            // Add file extension as last parameter
+            array_push($this->relPathParameters, $this->extension);
+            // Call handler and create fileName
+            $this->fileName = call_user_func_array($this->config->fileNameHandler, $this->relPathParameters);
+        }
+    }
+
     /**
      * Constructor
      * @param mixed $extensions Collection or single excepted extension
@@ -103,18 +114,14 @@ class Upload
 
         // If upload data exists
         if (isset($this->realName) && $this->realName != '') {
+
             // Get file extension
             $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
 
             // If we have no extension limitations or they are matched
             if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
-                // If we have callable handler for generating file name
-                if (isset($this->config->fileNameHandler) && is_callable($this->config->fileNameHandler)) {
-                    // Add file extension as last parameter
-                    array_push($this->relPathParameters, $this->extension);
-                    // Call handler and create fileName
-                    $this->fileName = call_user_func_array($this->config->fileNameHandler, $this->relPathParameters);
-                }
+                // Try to set file name using external handler
+                $this->setExternalName();
 
                 // Set function parameters
                 $this->setUploadProperties($filePath, $uploadName, $fileName);
