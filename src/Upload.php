@@ -12,7 +12,7 @@ class Upload
     /** Supported file extensions */
     protected $extensions = array();
 
-    /** @var string real file path */
+    /** @var string|boolean real file path */
     private $filePath;
 
     /** @var string Name of uploaded file */
@@ -72,7 +72,7 @@ class Upload
         $this->realName = $this->config->serverHandler->name();
 
         // If upload data exists
-        if (isset($this->realName)) {
+        if (isset($this->realName) && $this->realName != '') {
             // Get file extension
             $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
 

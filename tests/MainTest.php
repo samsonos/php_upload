@@ -15,7 +15,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        \samson\core\Error::$OUTPUT = true;
+        \samson\core\Error::$OUTPUT = false;
 
         // Create Server Handler mock
         $this->serverHandler = $this->getMockBuilder('\samson\upload\ServerHandler')
@@ -56,9 +56,17 @@ class MainTest extends \PHPUnit_Framework_TestCase
 
         $upload->upload($filePath, $uploadName, $fileName);
 
+        $this->assertTrue($upload->extension('png'));
+        $this->assertEquals($upload->extension(), 'png');
+        $this->assertEquals($upload->mimeType(), 'png');
+        $this->assertEquals($upload->size(), 16256);
         $this->assertEquals($fileName, 'tests/samsonos.png');
+        $this->assertEquals($upload->realName(), 'tests/samsonos.png');
         $this->assertNotNull($filePath);
         $this->assertNotNull($uploadName);
+        $this->assertNotNull($upload->path());
+        $this->assertNotNull($upload->name());
+        $this->assertNotNull($upload->fullPath());
     }
 
     public function testUploadFunctions()
@@ -69,42 +77,10 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->serverHandler
             ->expects($this->once())
             ->method('name')
-            ->willReturn('tests/samsonos.png');
-
-        $this->serverHandler
-            ->expects($this->once())
-            ->method('size')
-            ->willReturn('16256');
-
-        $this->serverHandler
-            ->expects($this->once())
-            ->method('file')
-            ->willReturn(file_get_contents('tests/samsonos.png'));
-
-        $this->serverHandler
-            ->expects($this->once())
-            ->method('type')
-            ->willReturn('png');
+            ->willReturn('');
 
         $upload = new Upload(array(), null, $this->instance);
 
-        $upload->upload($filePath, $uploadName, $fileName);
-
-        $upload->size();
-        $upload->path();
-        $upload->name();
-        $upload->fullPath();
-        $upload->realName();
-        $upload->mimeType();
-
-        $this->assertTrue($upload->extension('png'));
-        $this->assertEquals($upload->extension(), 'png');
+        $this->assertFalse($upload->upload());
     }
-
-
-
-   /* public function testUpload2()
-    {
-        $this->assertEquals('1', '1');
-    }*/
 }

@@ -25,7 +25,7 @@ class ServerHandler
 
     /**
      * Get file size from $_SERVER array
-     * @return string Size of uploaded file
+     * @return integer Size of uploaded file
      */
     public function size()
     {
