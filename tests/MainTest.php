@@ -52,4 +52,9 @@ class MainTest extends \PHPUnit_Framework_TestCase
            ->willReturn('png');
 
    }*/
+
+    public function testUpload()
+    {
+        $this->assertEquals('1', '1');
+    }
 }
