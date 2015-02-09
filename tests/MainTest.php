@@ -137,6 +137,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
 
     public function testServerHandler()
     {
+        // Create fs mock
         $fs = $this->getMockBuilder('\samsonphp\fs\FileService')
             ->disableOriginalConstructor()
             ->getMock();

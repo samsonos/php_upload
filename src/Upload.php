@@ -96,6 +96,7 @@ class Upload
             return true;
         }
 
+        // Failed
         return false;
     }
 
@@ -138,7 +139,7 @@ class Upload
             return $this->createUpload($filePath, $uploadName, $fileName);
         }
 
-        // Failure
+        // Failed
         return false;
     }
 
