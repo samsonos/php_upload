@@ -31,7 +31,7 @@ class Upload
     private $size;
 
     /** @var UploadController Pointer to module controller */
-    public $parent;
+    public $config;
 
     /** Upload server path */
     public $uploadDir = 'upload/';
@@ -44,7 +44,7 @@ class Upload
      * @param mixed $extensions Collection or single excepted extension
      * @param mixed $relPathParameters Data to be passed to external rel. path builder
      */
-    public function __construct($extensions = array(), $relPathParameters = null)
+    public function __construct($extensions = array(), $relPathParameters = null, $config = null)
     {
         // Set additional relative path parameters
         $this->relPathParameters = !is_array($relPathParameters) ? array($relPathParameters) : $relPathParameters;
@@ -53,10 +53,10 @@ class Upload
         $this->extensions = is_array($extensions) ? $extensions : array($extensions);
 
         // Get current upload adapter
-        $this->parent = & m('upload');
+        $this->config = !isset($config) ? m('upload') : $config;
 
         // Build relative path for uploading
-        $this->uploadDir = call_user_func_array($this->parent->uploadDirHandler, $this->relPathParameters);
+        $this->uploadDir = call_user_func_array($this->config->uploadDirHandler, $this->relPathParameters);
     }
 
     /**
@@ -69,7 +69,7 @@ class Upload
     public function upload(& $filePath = '', & $uploadName = '', & $fileName = '')
     {
         // Try to get upload file with new upload method
-        $this->realName = $this->parent->serverHandler->name();
+        $this->realName = $this->config->serverHandler->name();
 
         // If upload data exists
         if (isset($this->realName)) {
@@ -79,11 +79,11 @@ class Upload
             // If we have no extension limitations or they are matched
             if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
                 // If we have callable handler for generating file name
-                if (isset($this->parent->fileNameHandler) && is_callable($this->parent->fileNameHandler)) {
+                if (isset($this->config->fileNameHandler) && is_callable($this->config->fileNameHandler)) {
                     // Add file extension as last parameter
                     array_push($this->relPathParameters, $this->extension);
                     // Call handler and create fileName
-                    $this->fileName = call_user_func_array($this->parent->fileNameHandler, $this->relPathParameters);
+                    $this->fileName = call_user_func_array($this->config->fileNameHandler, $this->relPathParameters);
                 }
 
                 // If we have not created filename - generic generate it
@@ -92,14 +92,14 @@ class Upload
                 }
 
                 /** @var string $file Read uploaded file */
-                $file = $this->parent->serverHandler->file();
+                $file = $this->config->serverHandler->file();
 
                 // Create file
-                $this->filePath = $this->parent->serverHandler->write($file, $this->fileName, $this->uploadDir);
+                $this->filePath = $this->config->serverHandler->write($file, $this->fileName, $this->uploadDir);
 
                 // Save size and mimeType
-                $this->size = $this->parent->serverHandler->size();
-                $this->mimeType = $this->parent->serverHandler->type();
+                $this->size = $this->config->serverHandler->size();
+                $this->mimeType = $this->config->serverHandler->type();
 
                 // store data for output
                 $filePath = $this->fullPath();
@@ -118,13 +118,13 @@ class Upload
     /** @return string Full path to file  */
     public function path()
     {
-        return $this->parent->pathPrefix.$this->filePath;
+        return $this->config->pathPrefix.$this->filePath;
     }
 
     /** @return string Full path to file with file name */
     public function fullPath()
     {
-        return $this->parent->pathPrefix.$this->filePath.$this->fileName;
+        return $this->config->pathPrefix.$this->filePath.$this->fileName;
     }
 
     /**

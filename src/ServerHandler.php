@@ -1,5 +1,6 @@
 <?php
 namespace samson\upload;
+
 /**
  * Created by PhpStorm.
  * User: onysko
@@ -34,6 +35,6 @@ class ServerHandler
         /** @var $fs \samsonphp\fs\FileService Pointer to module controller */
         $fs = & m('fs');
 
-        $fs->write($file, $fileName, $uploadDir);
+        return $fs->write($file, $fileName, $uploadDir);
     }
 }

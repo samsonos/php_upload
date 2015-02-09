@@ -15,18 +15,21 @@ class MainTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        \samson\core\Error::$OUTPUT = false;
+        \samson\core\Error::$OUTPUT = true;
 
         // Create Server Handler mock
         $this->serverHandler = $this->getMockBuilder('\samson\upload\ServerHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->instance = \samson\core\Service::getInstance('\samson\upload\UploadHandler');
+        $this->instance = \samson\core\Service::getInstance('\samson\upload\UploadController');
     }
 
-   /*public function testUpload()
+   public function testUpload()
    {
+       $this->instance->fs = \samson\core\Service::getInstance('\samsonphp\fs\FileService');
+       $this->instance->fs->loadExternalService('\samsonphp\fs\LocalFileService');
+
        $this->instance->init();
 
        $this->instance->serverHandler = & $this->serverHandler;
@@ -34,7 +37,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
        $this->serverHandler
            ->expects($this->once())
            ->method('name')
-           ->willReturn('samsonos.png');
+           ->willReturn('tests/samsonos.png');
 
        $this->serverHandler
            ->expects($this->once())
@@ -44,17 +47,23 @@ class MainTest extends \PHPUnit_Framework_TestCase
        $this->serverHandler
            ->expects($this->once())
            ->method('file')
-           ->willReturn(file_get_contents('samsonos.png'));
+           ->willReturn(file_get_contents('tests/samsonos.png'));
 
        $this->serverHandler
            ->expects($this->once())
            ->method('type')
            ->willReturn('png');
 
-   }*/
+       $upload = new Upload(array(), null, $this->instance);
 
-    public function testUpload()
+       $upload->upload($filePath, $uploadName, $fileName);
+
+       //trace($filePath);
+       $this->assertEquals($fileName, 'tests/samsonos.png');
+   }
+
+   /* public function testUpload2()
     {
         $this->assertEquals('1', '1');
-    }
+    }*/
 }
