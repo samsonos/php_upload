@@ -79,6 +79,26 @@ class Upload
         }
     }
 
+    protected function createUpload(& $filePath = '', & $uploadName = '', & $fileName = '')
+    {
+        // Get file extension
+        $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
+
+        // If we have no extension limitations or they are matched
+        if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
+            // Try to set file name using external handler
+            $this->setExternalName();
+
+            // Set function parameters
+            $this->setUploadProperties($filePath, $uploadName, $fileName);
+
+            // Success
+            return true;
+        }
+
+        return false;
+    }
+
     /**
      * Constructor
      * @param mixed $extensions Collection or single excepted extension
@@ -114,21 +134,8 @@ class Upload
 
         // If upload data exists
         if (isset($this->realName) && $this->realName != '') {
-
-            // Get file extension
-            $this->extension = pathinfo($this->realName, PATHINFO_EXTENSION);
-
-            // If we have no extension limitations or they are matched
-            if (!sizeof($this->extensions) || in_array($this->extension, $this->extensions)) {
-                // Try to set file name using external handler
-                $this->setExternalName();
-
-                // Set function parameters
-                $this->setUploadProperties($filePath, $uploadName, $fileName);
-
-                // Success
-                return true;
-            }
+            // Try to create upload
+            return $this->createUpload($filePath, $uploadName, $fileName);
         }
 
         // Failure
