@@ -6,6 +6,7 @@
             "email":"egorov@samsonos.com"
         }
     ],
+    "minimum-stability":"dev",
 	"require":{
         "samsonos/js_core":"*",
         "samsonos/php_core":"1.*",
@@ -20,5 +21,8 @@
             "samsonos\\upload\\": "src/"
         },
         "files": ["src/global.php"]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "4.2.*"
     }
 }
