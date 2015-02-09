@@ -47,6 +47,27 @@ class Upload
         $fileName = $this->realName();
     }
 
+    protected function setUploadProperties(& $filePath = '', & $uploadName = '', & $fileName = '')
+    {
+        // If we have not created filename - generic generate it
+        if (!isset($this->fileName)) {
+            $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
+        }
+
+        /** @var string $file Read uploaded file */
+        $file = $this->config->serverHandler->file();
+
+        // Create file
+        $this->filePath = $this->config->serverHandler->write($file, $this->fileName, $this->uploadDir);
+
+        // Save size and mimeType
+        $this->size = $this->config->serverHandler->size();
+        $this->mimeType = $this->config->serverHandler->type();
+
+        // Set function parameters
+        $this->setUploadParams($filePath, $uploadName, $fileName);
+    }
+
     /**
      * Constructor
      * @param mixed $extensions Collection or single excepted extension
@@ -95,23 +116,8 @@ class Upload
                     $this->fileName = call_user_func_array($this->config->fileNameHandler, $this->relPathParameters);
                 }
 
-                // If we have not created filename - generic generate it
-                if (!isset($this->fileName)) {
-                    $this->fileName = strtolower(md5(time().$this->realName).'.'.$this->extension);
-                }
-
-                /** @var string $file Read uploaded file */
-                $file = $this->config->serverHandler->file();
-
-                // Create file
-                $this->filePath = $this->config->serverHandler->write($file, $this->fileName, $this->uploadDir);
-
-                // Save size and mimeType
-                $this->size = $this->config->serverHandler->size();
-                $this->mimeType = $this->config->serverHandler->type();
-
                 // Set function parameters
-                $this->setUploadParams($filePath, $uploadName, $fileName);
+                $this->setUploadProperties($filePath, $uploadName, $fileName);
 
                 // Success
                 return true;
