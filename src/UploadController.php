@@ -37,8 +37,10 @@ class UploadController extends CompressableExternalModule
      */
     public function init(array $params = array())
     {
-        // Store pointer to file system module
-        $this->fs = !isset($this->fs) ? m('fs') : $this->fs;
+        if (!isset($this->fs)) {
+            // Store pointer to file system module
+            $this->fs = & m('fs');
+        }
 
         // If no valid handlers are passed - use generic handlers
         if (!isset($this->uploadDirHandler) || !is_callable($this->uploadDirHandler)) {

@@ -39,10 +39,19 @@ class Upload
     /** @var array Parameters for callable handlers */
     protected $relPathParameters = array();
 
+    protected function setUploadParams(& $filePath = '', & $uploadName = '', & $fileName = '')
+    {
+        // store data for output
+        $filePath = $this->fullPath();
+        $uploadName = $this->name();
+        $fileName = $this->realName();
+    }
+
     /**
      * Constructor
      * @param mixed $extensions Collection or single excepted extension
      * @param mixed $relPathParameters Data to be passed to external rel. path builder
+     * @param mixed $config External configuration class
      */
     public function __construct($extensions = array(), $relPathParameters = null, $config = null)
     {
@@ -101,10 +110,8 @@ class Upload
                 $this->size = $this->config->serverHandler->size();
                 $this->mimeType = $this->config->serverHandler->type();
 
-                // store data for output
-                $filePath = $this->fullPath();
-                $uploadName = $this->name();
-                $fileName = $this->realName();
+                // Set function parameters
+                $this->setUploadParams($filePath, $uploadName, $fileName);
 
                 // Success
                 return true;
