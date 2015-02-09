@@ -14,6 +14,14 @@ namespace samson\upload;
  */
 class ServerHandler
 {
+    /** @var $fs \samsonphp\fs\FileService Pointer to module controller */
+    public $fs;
+
+    public function __construct($fs = null)
+    {
+        $this->fs = isset($fs) ? $fs : m('fs');
+    }
+
     /**
      * Get file name from $_SERVER array
      * @return string Name of uploaded file
@@ -52,9 +60,6 @@ class ServerHandler
 
     public function write($file, $fileName, $uploadDir)
     {
-        /** @var $fs \samsonphp\fs\FileService Pointer to module controller */
-        $fs = & m('fs');
-
-        return $fs->write($file, $fileName, $uploadDir);
+        return $this->fs->write($file, $fileName, $uploadDir);
     }
 }

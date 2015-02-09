@@ -30,12 +30,12 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->instance = \samson\core\Service::getInstance('\samson\upload\UploadController');
         $this->instance->fs = \samson\core\Service::getInstance('\samsonphp\fs\FileService');
         $this->instance->fs->loadExternalService('\samsonphp\fs\LocalFileService');
+        $this->instance->serverHandler = & $this->serverHandler;
     }
 
     public function testUpload()
     {
         $this->instance->init();
-        $this->instance->serverHandler = & $this->serverHandler;
 
         $this->serverHandler
            ->expects($this->once())
@@ -133,5 +133,20 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $upload = new Upload(array('xls', 'gif'), null, $this->instance);
 
         $this->assertFalse($upload->upload());
+    }
+
+    public function testServerHandler()
+    {
+        $fs = $this->getMockBuilder('\samsonphp\fs\FileService')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $serverHandler = new ServerHandler($fs);
+
+        $serverHandler->name();
+        $serverHandler->size();
+        $serverHandler->file();
+        $serverHandler->type();
+        $serverHandler->write('fileName', 'fileDir', 'uploadDir');
     }
 }

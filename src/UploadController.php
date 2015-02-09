@@ -47,7 +47,9 @@ class UploadController extends CompressableExternalModule
             $this->uploadDirHandler = array($this, 'defaultDirHandler');
         }
 
-        $this->serverHandler = new ServerHandler();
+        if (!isset($this->serverHandler)) {
+            $this->serverHandler = new ServerHandler();
+        }
 
         // Call parent initialization
         parent::init($params);
