@@ -1,10 +1,3 @@
-#Upload - SamsonPHP 
-
-Generic asynchronous file uploader module
-
-Developed by [SamsonOS](http://samsonos.com/)
-
-        
 # SamsonPHP Upload module
 
 [![Latest Stable Version](https://poser.pugx.org/samsonos/upload/v/stable.svg)](https://packagist.org/packages/samsonos/upload) 
@@ -105,3 +98,5 @@ The third one is configuration class. This is system parameter which default val
 
 Method that directly create uploading called ``` upload(& $filePath = '', & $fileName = '', & $realName = '') ```
 You can get main file information using parameters of this method.
+
+Developed by [SamsonOS](http://samsonos.com/)
