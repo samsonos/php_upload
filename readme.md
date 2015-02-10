@@ -1,7 +1,6 @@
 # SamsonPHP Upload module
 
-https://scrutinizer-ci.com/g/samsonos/php_upload/badges/quality-score.png?b=master
-[![Latest Stable Version](https://poser.pugx.org/samsonos/php_upload/v/stable.svg)](https://packagist.org/packages/samsonos/php_upload) 
+[![Latest Stable Version](https://poser.pugx.org/samsonos/php_upload/v/stable.svg)](https://packagist.org/packages/samsonos/php_upload)
 [![Build Status](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/build.png?b=master)](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/build.png?b=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/samsonos/php_upload/?branch=master)
 [![Total Downloads](https://poser.pugx.org/samsonos/php_upload/downloads.svg)](https://packagist.org/packages/samsonos/php_upload)
