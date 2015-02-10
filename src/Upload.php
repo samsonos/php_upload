@@ -144,6 +144,7 @@ class Upload
      */
     public function __construct($extensions = array(), $relPathParameters = null, $config = null)
     {
+        // Init main parameters of current object
         $this->initParams($extensions, $relPathParameters);
 
         // Get current upload adapter

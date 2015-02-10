@@ -7,7 +7,16 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/samsonos/php_upload/?branch=master)
 [![Stories in Ready](https://badge.waffle.io/samsonos/php_upload.png?label=ready&title=Ready)](https://waffle.io/samsonos/php_upload)
 
-##Configuration
+## Connection
+To use this module in your project you must add dependency in your ```composer.json```:
+```json
+    "require": {
+        "samsonos/php_upload": "*"
+    },
+```
+After doing ```composer install``` or ```composer update``` you will get all classes and functions of Upload module.
+
+## Configuration
 
 Configuration for Upload module is not necessary, but you can use it if you want to create unique file name or upload dir name for uploading files.<br />
 If you will not use configuration, your upload catalog will be called 'upload' and file name will be random generated.
