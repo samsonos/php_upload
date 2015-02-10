@@ -9,7 +9,7 @@
 
 ##Configuration
 
-Configuration for Upload module is not necessary, but you can use it if you want to create unique file name or upload dir name for uploading files.
+Configuration for Upload module is not necessary, but you can use it if you want to create unique file name or upload dir name for uploading files.<br />
 If you will not use configuration, your upload catalog will be called 'upload' and file name will be random generated.
 
 Thanks to [SamsonPHP module/service configuration](https://github.com/samsonphp/config) you can create simple config class:
@@ -42,10 +42,8 @@ First of all you need to create html container with your file input:
 </p>
 ```
 
-Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".
-
-Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".
-
+Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".<br />
+Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".<br />
 Input with class "__example_upload" is input button for choosing file from clients computer. If you are using class name "__upload" for this input, you don't need to create some javascript code in order for everything to work.
 
 ### Example of javascript code
@@ -94,9 +92,9 @@ function catalog_async_upload()
 }
 ```
 
-To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
-First parameter is array of allowable file extensions for uploading file.
-Second is array of parameters for your callback functions. They can be used if you are using module configuration.
+To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.<br />
+First parameter is array of allowable file extensions for uploading file.<br />
+Second is array of parameters for your callback functions. They can be used if you are using module configuration.<br />
 
 The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
 
