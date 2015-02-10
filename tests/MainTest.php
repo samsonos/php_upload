@@ -46,7 +46,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->serverHandler
            ->expects($this->once())
            ->method('size')
-           ->willReturn('16256');
+           ->willReturn('1003');
 
         $this->serverHandler
            ->expects($this->once())
@@ -65,7 +65,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($upload->extension('png'));
         $this->assertEquals($upload->extension(), 'png');
         $this->assertEquals($upload->mimeType(), 'png');
-        $this->assertEquals($upload->size(), 16256);
+        $this->assertEquals($upload->size(), 1003);
         $this->assertEquals($fileName, 'tests/samsonos.png');
         $this->assertEquals($upload->realName(), 'tests/samsonos.png');
         $this->assertNotNull($filePath);

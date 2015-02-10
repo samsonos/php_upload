@@ -65,16 +65,17 @@ uploadFileHandler(file, {
 });
 ```
 
-The second parameter in function ```uploadFileHandler(file, options)``` is not necessary, you can use it for creating something special while file is uploading
+The second parameter in function ```uploadFileHandler(file, options)``` is not necessary, you can use it for creating something special while file is uploading.
 
 ### Example of uploading handler
-Server action in our HTML example is controller catalog/upload.
+Server action in our HTML example is controller 'catalog/upload'.
 Let's create this function:
 ```php
 function catalog_async_upload()
 {
     // Create AJAX response array
     $json = array('status' => 0);
+
     // Create object for uploading file to server
     $upload = new \samson\upload\Upload(array('png','jpg'));
 
@@ -92,10 +93,10 @@ function catalog_async_upload()
 }
 ```
 
-To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.<br />
+To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
+
 First parameter is array of allowable file extensions for uploading file.<br />
 Second is array of parameters for your callback functions. They can be used if you are using module configuration.<br />
-
 The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
 
 Method that directly create uploading called ``` upload(& $filePath = '', & $fileName = '', & $realName = '') ```.
