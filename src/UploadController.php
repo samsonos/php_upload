@@ -2,7 +2,6 @@
 namespace samson\upload;
 
 use samson\core\CompressableExternalModule;
-use samson\core\iModuleViewable;
 
 /**
  * SamsonPHP Upload module
@@ -36,7 +35,8 @@ class UploadController extends CompressableExternalModule
     protected function initFields()
     {
         // Store pointer to file system module
-        $this->fs = !isset($this->fs) ? m('fs') : $this->fs;
+        $this->fs =
+            !isset($this->fs) ? (m('fs') instanceof \samsonphp\fs\FileService ? m('fs') : $this->fs) : $this->fs;
 
         // Set server handler object
         $this->serverHandler = !isset($this->serverHandler) ? new ServerHandler() : $this->serverHandler;
