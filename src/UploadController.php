@@ -34,8 +34,11 @@ class UploadController extends CompressableExternalModule
      */
     protected function initFields()
     {
+        /** @var \samsonphp\fs\FileService $fs */
+        $fs = !isset($this->fs) ? m('fs') : $this->fs;
+
         // Store pointer to file system module
-        $this->fs = !isset($this->fs) ? m('fs') : $this->fs;
+        $this->fs = $fs;
 
         // Set server handler object
         $this->serverHandler = !isset($this->serverHandler) ? new ServerHandler() : $this->serverHandler;
