@@ -69,6 +69,7 @@ class UploadController extends CompressableExternalModule
      */
     public function defaultDirHandler()
     {
+        // Default file path
         $path = 'upload';
 
         // Create upload dir if it does not present
