@@ -24,7 +24,7 @@ class UploadController extends CompressableExternalModule
     /** @var callable External handler to build file name */
     public $fileNameHandler;
 
-    /** @var \samsonphp\fs\FileService|\samson\core\iModule Pointer to file system module */
+    /** @var \samsonphp\fs\FileService Pointer to file system module */
     public $fs;
 
     /** @var ServerHandler Server functions handler */
