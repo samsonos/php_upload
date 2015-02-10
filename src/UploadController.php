@@ -24,20 +24,22 @@ class UploadController extends CompressableExternalModule
     /** @var callable External handler to build file name */
     public $fileNameHandler;
 
-    /** @var \samsonphp\fs\FileService Pointer to file system module */
+    /** @var \samsonphp\fs\FileService|\samson\core\iModule Pointer to file system module */
     public $fs;
 
     /** @var ServerHandler Server functions handler */
     public $serverHandler;
 
     /**
-     * @return \samsonphp\fs\FileService Pointer to file system module
+     * Init current file system module and server requests handler
      */
-    protected function getFileSystemModule()
+    protected function initFields()
     {
-        // Get pointer to File system module
-        $fs = & m('fs');
-        return $fs;
+        // Store pointer to file system module
+        $this->fs = !isset($this->fs) ? m('fs') : $this->fs;
+
+        // Set server handler object
+        $this->serverHandler = !isset($this->serverHandler) ? new ServerHandler() : $this->serverHandler;
     }
 
     /**
@@ -47,16 +49,13 @@ class UploadController extends CompressableExternalModule
      */
     public function init(array $params = array())
     {
-        // Store pointer to file system module
-        $this->fs = !isset($this->fs) ? $this->getFileSystemModule() : $this->fs;
+        // Init FileSystem and ServerHandler
+        $this->initFields();
 
         // If no valid handlers are passed - use generic handlers
         if (!isset($this->uploadDirHandler) || !is_callable($this->uploadDirHandler)) {
             $this->uploadDirHandler = array($this, 'defaultDirHandler');
         }
-
-        // Set server handler object
-        $this->serverHandler = !isset($this->serverHandler) ? new ServerHandler() : $this->serverHandler;
 
         // Call parent initialization
         parent::init($params);
