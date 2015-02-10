@@ -14,6 +14,18 @@ namespace samson\upload;
  */
 class ServerHandler
 {
+    /** @var $fs \samsonphp\fs\FileService Pointer to module controller */
+    public $fs;
+
+    /**
+     * Server Handler constructor
+     * @param null $fs FileSystem module
+     */
+    public function __construct($fs = null)
+    {
+        $this->fs = isset($fs) ? $fs : m('fs');
+    }
+
     /**
      * Get file name from $_SERVER array
      * @return string Name of uploaded file
@@ -25,7 +37,7 @@ class ServerHandler
 
     /**
      * Get file size from $_SERVER array
-     * @return string Size of uploaded file
+     * @return integer Size of uploaded file
      */
     public function size()
     {
@@ -50,11 +62,15 @@ class ServerHandler
         return file_get_contents('php://input');
     }
 
+    /**
+     * Write file in servers file system
+     * @param $file mixed File content
+     * @param $fileName string File name
+     * @param $uploadDir string Catalog for uploading on server
+     * @return bool|string Path to file or false if some errors found
+     */
     public function write($file, $fileName, $uploadDir)
     {
-        /** @var $fs \samsonphp\fs\FileService Pointer to module controller */
-        $fs = & m('fs');
-
-        return $fs->write($file, $fileName, $uploadDir);
+        return $this->fs->write($file, $fileName, $uploadDir);
     }
 }

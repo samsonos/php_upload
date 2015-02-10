@@ -2,7 +2,6 @@
 namespace samson\upload;
 
 use samson\core\CompressableExternalModule;
-use samson\core\iModuleViewable;
 
 /**
  * SamsonPHP Upload module
@@ -31,23 +30,34 @@ class UploadController extends CompressableExternalModule
     public $serverHandler;
 
     /**
+     * Init current file system module and server requests handler
+     */
+    protected function initFields()
+    {
+        /** @var \samsonphp\fs\FileService $fs */
+        $fs = !isset($this->fs) ? m('fs') : $this->fs;
+
+        // Store pointer to file system module
+        $this->fs = $fs;
+
+        // Set server handler object
+        $this->serverHandler = !isset($this->serverHandler) ? new ServerHandler() : $this->serverHandler;
+    }
+
+    /**
      * Initialize module
      * @param array $params Collection of module parameters
      * @return bool True if module successfully initialized
      */
     public function init(array $params = array())
     {
-        if (!isset($this->fs)) {
-            // Store pointer to file system module
-            $this->fs = & m('fs');
-        }
+        // Init FileSystem and ServerHandler
+        $this->initFields();
 
         // If no valid handlers are passed - use generic handlers
         if (!isset($this->uploadDirHandler) || !is_callable($this->uploadDirHandler)) {
             $this->uploadDirHandler = array($this, 'defaultDirHandler');
         }
-
-        $this->serverHandler = new ServerHandler();
 
         // Call parent initialization
         parent::init($params);

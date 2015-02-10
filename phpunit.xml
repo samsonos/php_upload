@@ -26,6 +26,7 @@
             <exclude>
                 <directory suffix=".php">vendor</directory>
 				<directory suffix=".php">tests</directory>
+                <file>src/global.php</file>
             </exclude>
         </whitelist>
     </filter>
