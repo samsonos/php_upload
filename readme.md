@@ -104,9 +104,9 @@ function catalog_async_upload()
 
 To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
 
-*First parameter is array of allowable file extensions for uploading file.<br />
-*Second is array of parameters for your callback functions. They can be used if you are using module configuration.<br />
-*The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
+* First parameter is array of allowable file extensions for uploading file.<br />
+* Second is array of parameters for your callback functions. They can be used if you are using module configuration.<br />
+* The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
 
 Method that directly create uploading called ``` upload(& $filePath = '', & $fileName = '', & $realName = '') ```.
 You can get main file information using parameters of this method.
