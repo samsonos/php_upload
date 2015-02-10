@@ -9,8 +9,8 @@
 
 ##Configuration
 
-Configuration for Upload module is not necessary, you can use it if you want to create unique file name or upload dir name for uploading files.
-If you are not use configuration your upload catalog will be dir 'upload' on your server and file name will be random generated
+Configuration for Upload module is not necessary, but you can use it if you want to create unique file name or upload dir name for uploading files.
+If you will not use configuration, your upload catalog will be called 'upload' and file name will be random generated.
 
 Thanks to [SamsonPHP module/service configuration](https://github.com/samsonphp/config) you can create simple config class:
 
@@ -95,9 +95,7 @@ function catalog_async_upload()
 ```
 
 To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
-
-First parameter is array of allowable file extensions for uploading file
-
+First parameter is array of allowable file extensions for uploading file.
 Second is array of parameters for your callback functions. They can be used if you are using module configuration.
 
 The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.

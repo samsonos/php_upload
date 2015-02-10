@@ -39,6 +39,26 @@ class Upload
     /** @var array Parameters for callable handlers */
     protected $relPathParameters = array();
 
+    /**
+     * Init module main fields
+     * @param array $extensions Allowed file types
+     * @param null $relPathParameters Parameters for callback functions
+     */
+    protected function initParams($extensions = array(), $relPathParameters = null)
+    {
+        // Set additional relative path parameters
+        $this->relPathParameters = !is_array($relPathParameters) ? array($relPathParameters) : $relPathParameters;
+
+        // Set file extension limitations, form array if isn't an array
+        $this->extensions = is_array($extensions) ? $extensions : array($extensions);
+    }
+
+    /**
+     * Set upload function parameters
+     * @param string $filePath
+     * @param string $uploadName
+     * @param string $fileName
+     */
     protected function setUploadParams(& $filePath = '', & $uploadName = '', & $fileName = '')
     {
         // store data for output
@@ -47,6 +67,12 @@ class Upload
         $fileName = $this->realName();
     }
 
+    /**
+     * Set properties of current file upload
+     * @param string $filePath
+     * @param string $uploadName
+     * @param string $fileName
+     */
     protected function setUploadProperties(& $filePath = '', & $uploadName = '', & $fileName = '')
     {
         // If we have not created filename - generic generate it
@@ -68,6 +94,9 @@ class Upload
         $this->setUploadParams($filePath, $uploadName, $fileName);
     }
 
+    /**
+     * Try to create unique file name using external callback handler
+     */
     protected function setExternalName()
     {
         // If we have callable handler for generating file name
@@ -79,6 +108,13 @@ class Upload
         }
     }
 
+    /**
+     * Make file uploading
+     * @param string $filePath
+     * @param string $uploadName
+     * @param string $fileName
+     * @return bool Upload status
+     */
     protected function createUpload(& $filePath = '', & $uploadName = '', & $fileName = '')
     {
         // Get file extension
@@ -108,11 +144,7 @@ class Upload
      */
     public function __construct($extensions = array(), $relPathParameters = null, $config = null)
     {
-        // Set additional relative path parameters
-        $this->relPathParameters = !is_array($relPathParameters) ? array($relPathParameters) : $relPathParameters;
-
-        // Set file extension limitations, form array if isn't an array
-        $this->extensions = is_array($extensions) ? $extensions : array($extensions);
+        $this->initParams($extensions, $relPathParameters);
 
         // Get current upload adapter
         $this->config = !isset($config) ? m('upload') : $config;
