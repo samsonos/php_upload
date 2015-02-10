@@ -30,7 +30,7 @@ class UploadConfig extends \samson\core\Config
     public $uploadDirHandler = 'uploadDirHandler';
 
     // Callback function for creating file name
-    public $fileNameHandler = 'uploadNameHandler;
+    public $fileNameHandler = 'uploadNameHandler';
 }
 ```
 
@@ -82,11 +82,14 @@ Let's create this function:
 ```php
 function catalog_async_upload()
 {
+    // Parameter for callback functions
+    $parameter = 5;
+
     // Create AJAX response array
     $json = array('status' => 0);
 
     // Create object for uploading file to server
-    $upload = new \samson\upload\Upload(array('png','jpg'));
+    $upload = new \samson\upload\Upload(array('png','jpg'), $parameter);
 
     if ($upload->upload($filePath, $fileName, $realName) {
         $json['status'] = 1;
@@ -104,11 +107,32 @@ function catalog_async_upload()
 
 To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
 
-* First parameter is array of allowable file extensions for uploading file.<br />
-* Second is array of parameters for your callback functions. They can be used if you are using module configuration.<br />
+* First parameter is array of allowable file extensions for uploading file.
+* Second is array of parameters (or just one parameter) for your callback functions. It can be used if you are using module configuration.
 * The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
 
 Method that directly create uploading called ``` upload(& $filePath = '', & $fileName = '', & $realName = '') ```.
 You can get main file information using parameters of this method.
 
+Also we can create our callback functions that are defined in configuration class:
+```php
+/**
+* External handler for defining upload catalog
+*/
+function uploadDirHandler($parameter)
+{
+    return 'upload/catalog'.$parameter;
+}
+
+/**
+*
+*/
+function uploadNameHandler($parameter, $extension)
+{
+    return 'item'.$parameter.$extension;
+}
+```
+
+As you see, we have parameter ```$extension``` in our name handler function. This parameter **is always defined** as last parameter of this callback function.</ br>
+In our case after created callback functions, upload catalog will be called 'upload/catalog5' and file name will be like 'item5'.
 Developed by [SamsonOS](http://samsonos.com/).
