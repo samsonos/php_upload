@@ -10,9 +10,9 @@
 ## Connection
 To use this module in your project you must add dependency in your ```composer.json```:
 ```json
-    "require": {
-        "samsonos/php_upload": "*"
-    },
+"require": {
+    "samsonos/php_upload": "*"
+},
 ```
 After doing ```composer install``` or ```composer update``` you will get all classes and functions of Upload module.
 
