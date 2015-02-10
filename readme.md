@@ -55,7 +55,7 @@ First of all you need to create html container with your file input:
 
 Also you can add following feature blocks :
 * Container with class "__progress_text" will show you percents of file uploading.
-* Tag <p> inside container with class "__progress_bar" will create animation as progress bar of uploading
+* Paragraph tag inside container with class "__progress_bar" will create animation as progress bar of uploading.
 
 Remember, that you must add some css styles for this blocks to use them as you want.
 
