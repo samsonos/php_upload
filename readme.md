@@ -30,15 +30,13 @@ class UploadConfig extends \samson\core\Config
     public $uploadDirHandler = 'uploadDirHandler';
 
     // Callback function for creating file name
-    public $fileNameHandler = 'uploadNameHandler;
+    public $fileNameHandler = 'uploadNameHandler';
 }
 ```
 
 ## Create async file uploading
 
-The main feature of current module is asynchronous file uploading.
-
-Look at the example.
+The main feature of current module is asynchronous file uploading. Look at the example.
 
 ### Example of HTML code
 First of all you need to create html container with your file input:
@@ -51,9 +49,15 @@ First of all you need to create html container with your file input:
 </p>
 ```
 
-Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".<br />
-Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".<br />
-Input with class "__example_upload" is input button for choosing file from clients computer. If you are using class name "__upload" for this input, you don't need to create some javascript code in order for everything to work.
+* Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".
+* Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".
+* Input with class "__example_upload" is input button for choosing file from clients computer. If you are using class name "__upload" for this input, you don't need to create some javascript code in order for everything to work.
+
+Also you can add following feature blocks :
+* Container with class "__progress_text" will show you percents of file uploading.
+* Paragraph tag inside container with class "__progress_bar" will create animation as progress bar of uploading.
+
+Remember, that you must add some css styles for this blocks to use them as you want.
 
 ### Example of javascript code
 If you are using input with class different from "__upload", you need to handle you inputs:
@@ -82,11 +86,14 @@ Let's create this function:
 ```php
 function catalog_async_upload()
 {
+    // Parameter for callback functions
+    $parameter = 5;
+
     // Create AJAX response array
     $json = array('status' => 0);
 
     // Create object for uploading file to server
-    $upload = new \samson\upload\Upload(array('png','jpg'));
+    $upload = new \samson\upload\Upload(array('png','jpg'), $parameter);
 
     if ($upload->upload($filePath, $fileName, $realName) {
         $json['status'] = 1;
@@ -104,11 +111,34 @@ function catalog_async_upload()
 
 To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
 
-* First parameter is array of allowable file extensions for uploading file.<br />
-* Second is array of parameters for your callback functions. They can be used if you are using module configuration.<br />
+* First parameter is array of allowable file extensions for uploading file.
+* Second is array of parameters (or just one parameter) for your callback functions. It can be used if you are using module configuration.
 * The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
 
 Method that directly create uploading called ``` upload(& $filePath = '', & $fileName = '', & $realName = '') ```.
 You can get main file information using parameters of this method.
+
+Also we can create our callback functions that are defined in configuration class:
+```php
+/**
+* External handler for defining upload catalog
+*/
+function uploadDirHandler($parameter)
+{
+    return 'upload/catalog'.$parameter;
+}
+
+/**
+*
+*/
+function uploadNameHandler($parameter, $extension)
+{
+    return 'item'.$parameter.$extension;
+}
+```
+
+As you see, we have parameter ```$extension``` in our name handler function. This parameter **is always defined** as last parameter of this callback function.<br />
+In our case after created callback functions, upload catalog will be called 'upload/catalog5' and file name will be like 'item5'.<br />
+Don't forget, that in current example all uploading files will have simple name (maybe different extensions), so **you must come up with some logic for using upload file name handler correctly.**
 
 Developed by [SamsonOS](http://samsonos.com/).
