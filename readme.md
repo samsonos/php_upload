@@ -1,11 +1,12 @@
 # SamsonPHP Upload module
 
-[![Latest Stable Version](https://poser.pugx.org/samsonos/upload/v/stable.svg)](https://packagist.org/packages/samsonos/upload) 
-[![Build Status](https://scrutinizer-ci.com/g/samsonos/upload/badges/build.png?b=master)](https://scrutinizer-ci.com/g/samsonos/upload/badges/build.png?b=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/samsonos/upload/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/samsonos/upload/?branch=master)
-[![Total Downloads](https://poser.pugx.org/samsonos/upload/downloads.svg)](https://packagist.org/packages/samsonos/upload)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/samsonos/upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/samsonos/upload/?branch=master)
-[![Stories in Ready](https://badge.waffle.io/samsonos/upload.png?label=ready&title=Ready)](https://waffle.io/samsonos/upload)
+https://scrutinizer-ci.com/g/samsonos/php_upload/badges/quality-score.png?b=master
+[![Latest Stable Version](https://poser.pugx.org/samsonos/php_upload/v/stable.svg)](https://packagist.org/packages/samsonos/php_upload) 
+[![Build Status](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/build.png?b=master)](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/build.png?b=master)
+[![Code Coverage](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/samsonos/php_upload/?branch=master)
+[![Total Downloads](https://poser.pugx.org/samsonos/php_upload/downloads.svg)](https://packagist.org/packages/samsonos/php_upload)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/samsonos/php_upload/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/samsonos/php_upload/?branch=master)
+[![Stories in Ready](https://badge.waffle.io/samsonos/php_upload.png?label=ready&title=Ready)](https://waffle.io/samsonos/php_upload)
 
 ##Configuration
 
@@ -28,6 +29,7 @@ class UploadConfig extends \samson\core\Config
 ## Create async file uploading
 
 The main feature of current module is asynchronous file uploading.
+
 Look at the example.
 
 ### Example of HTML code
@@ -42,7 +44,9 @@ First of all you need to create html container with your file input:
 ```
 
 Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".
+
 Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".
+
 Input with class "__example_upload" is input button for choosing file from clients computer. If you are using class name "__upload" for this input, you don't need to create some javascript code in order for everything to work.
 
 ### Example of javascript code
@@ -92,8 +96,11 @@ function catalog_async_upload()
 ```
 
 To create file upload you need to create class \samson\upload\Upload, constructor of which can have three parameters.
+
 First parameter is array of allowable file extensions for uploading file
+
 Second is array of parameters for your callback functions. They can be used if you are using module configuration.
+
 The third one is configuration class. This is system parameter which default value is m('upload'). Better do not specify it, if you are working with simple upload module.
 
 Method that directly create uploading called ``` upload(& $filePath = '', & $fileName = '', & $realName = '') ```
