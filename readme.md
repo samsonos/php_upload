@@ -49,9 +49,15 @@ First of all you need to create html container with your file input:
 </p>
 ```
 
-Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".<br />
-Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".<br />
-Input with class "__example_upload" is input button for choosing file from clients computer. If you are using class name "__upload" for this input, you don't need to create some javascript code in order for everything to work.
+* Input with class "__action" defines handler of your uploading. It can be controller method in your bundle or simple controller function. It always must have class "__action".
+* Input with class "__file_size" defines max size of uploading file. It always must have class "__file_size".
+* Input with class "__example_upload" is input button for choosing file from clients computer. If you are using class name "__upload" for this input, you don't need to create some javascript code in order for everything to work.
+
+Also you can add following feature blocks :
+* Container with class "__progress_text" will show you percents of file uploading.
+* Tag <p> inside container with class "__progress_bar" will create animation as progress bar of uploading
+
+Remember, that you must add some css styles for this blocks to use them as you want.
 
 ### Example of javascript code
 If you are using input with class different from "__upload", you need to handle you inputs:
@@ -131,6 +137,8 @@ function uploadNameHandler($parameter, $extension)
 }
 ```
 
-As you see, we have parameter ```$extension``` in our name handler function. This parameter **is always defined** as last parameter of this callback function.<br>
-In our case after created callback functions, upload catalog will be called 'upload/catalog5' and file name will be like 'item5'.
+As you see, we have parameter ```$extension``` in our name handler function. This parameter **is always defined** as last parameter of this callback function.<br />
+In our case after created callback functions, upload catalog will be called 'upload/catalog5' and file name will be like 'item5'.<br />
+Don't forget, that in current example all uploading files will have simple name (maybe different extensions), so **you must come up with some logic for using upload file name handler correctly.**
+
 Developed by [SamsonOS](http://samsonos.com/).
