@@ -133,6 +133,6 @@ function uploadNameHandler($parameter, $extension)
 }
 ```
 
-As you see, we have parameter ```$extension``` in our name handler function. This parameter **is always defined** as last parameter of this callback function.</ br>
+As you see, we have parameter ```$extension``` in our name handler function. This parameter **is always defined** as last parameter of this callback function.<br>
 In our case after created callback functions, upload catalog will be called 'upload/catalog5' and file name will be like 'item5'.
 Developed by [SamsonOS](http://samsonos.com/).
