@@ -36,9 +36,7 @@ class UploadConfig extends \samson\core\Config
 
 ## Create async file uploading
 
-The main feature of current module is asynchronous file uploading.
-
-Look at the example.
+The main feature of current module is asynchronous file uploading. Look at the example.
 
 ### Example of HTML code
 First of all you need to create html container with your file input:
