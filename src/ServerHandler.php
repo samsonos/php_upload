@@ -17,6 +17,10 @@ class ServerHandler
     /** @var $fs \samsonphp\fs\FileService Pointer to module controller */
     public $fs;
 
+    /**
+     * Server Handler constructor
+     * @param null $fs FileSystem module
+     */
     public function __construct($fs = null)
     {
         $this->fs = isset($fs) ? $fs : m('fs');
@@ -58,6 +62,13 @@ class ServerHandler
         return file_get_contents('php://input');
     }
 
+    /**
+     * Write file in servers file system
+     * @param $file mixed File content
+     * @param $fileName string File name
+     * @param $uploadDir string Catalog for uploading on server
+     * @return bool|string Path to file or false if some errors found
+     */
     public function write($file, $fileName, $uploadDir)
     {
         return $this->fs->write($file, $fileName, $uploadDir);

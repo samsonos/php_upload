@@ -33,6 +33,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->instance->serverHandler = & $this->serverHandler;
     }
 
+    // Test main method
     public function testUpload()
     {
         $this->instance->init();
@@ -74,6 +75,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->assertNotNull($upload->fullPath());
     }
 
+    // Test help functions after uploading
     public function testUploadFunctions()
     {
         $this->instance->init();
@@ -89,6 +91,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($upload->upload());
     }
 
+    // Test upload file name handler
     public function testHandler()
     {
         $this->instance->init();
@@ -120,6 +123,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $upload->upload($filePath, $uploadName, $fileName);
     }
 
+    // Test upload with extension error
     public function testExtension()
     {
         $this->instance->init();
@@ -135,6 +139,7 @@ class MainTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($upload->upload());
     }
 
+    // Test Class ServerHandler
     public function testServerHandler()
     {
         // Create fs mock
